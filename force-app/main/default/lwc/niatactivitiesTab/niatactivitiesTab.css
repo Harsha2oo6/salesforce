@@ -1,10 +1,35 @@
 .activity-item {
-    border-left: 3px solid var(--lwc-colorBrand, #0176d3);
+    border:none;
     background-color: var(--lwc-colorBackgroundAlt, #ffffff);
 }
 
 .activity-item:hover {
     background-color: var(--lwc-colorBackgroundRowHover, #f3f3f3);
+}
+
+.activity-icon-circle {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: #2e844a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.activity-icon {
+    --slds-c-icon-color-foreground-default: white;
+    color: white;
+}
+
+.activity-icon svg {
+    fill: white;
+}
+.accordion-content-activity{
+    border-left: #2e844a 4px solid;
+    border-radius: 8px;
+    background-color: var(--lwc-colorBackground, #f3f3f3);
+    box-sizing: content-box;
 }
 
 /* Modal Styles */

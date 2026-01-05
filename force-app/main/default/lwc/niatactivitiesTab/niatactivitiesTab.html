@@ -30,30 +30,46 @@
                                 </div>
                                 <template if:true={activitiesTabActivities.length}>
                                     <template for:each={activitiesTabActivities} for:item="activity">
-                                        <div key={activity.id}
-                                            class="slds-box slds-box_x-small slds-m-bottom_small activity-item">
-                                            <div class="slds-grid slds-grid_vertical">
-                                                <div class="slds-grid slds-grid_align-spread">
+                                        <c-common-accordion key={activity.id} variant="activity-item" is-collapsed-by-default="true">
+                                            <!-- Trigger: Clickable activity item -->
+                                            <div slot="trigger" class="slds-box slds-box_x-small activity-item">
+                                                <div class="slds-grid slds-grid_vertical-align-center">
+                                                    <!-- Green circular icon with checklist -->
+                                                    <div class="slds-m-right_small">
+                                                        <div class="activity-icon-circle">
+                                                            <lightning-icon icon-name="utility:task" 
+                                                                alternative-text="Activity" 
+                                                                size="small"
+                                                                class="activity-icon">
+                                                            </lightning-icon>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Title and info -->
                                                     <div class="slds-col slds-grow">
-                                                        <h3 class="slds-text-heading_small">{activity.title}</h3>
+                                                        <a href="#" 
+                                                            class="slds-text-heading_small slds-text-link" 
+                                                            onclick={handleTitleClick}>
+                                                            {activity.title}
+                                                        </a>
                                                         <template if:true={activity.related_to}>
                                                             <p class="slds-text-body_small slds-m-top_xx-small">
                                                                 Related to:
-                                                                <a href="#"
-                                                                    class="slds-text-link">{activity.related_to.name}
-                                                                    ({activity.related_to.id})</a>
+                                                                <a href="#" class="slds-text-link">{activity.related_to.name} ({activity.related_to.id})</a>
                                                             </p>
                                                         </template>
                                                     </div>
                                                 </div>
-
-                                                <template if:true={activity.completed_at}>
-                                                    <div class="slds-text-body_small slds-m-top_xx-small">
-                                                        <strong>Completed:</strong> {activity.formattedCompletedAt}
-                                                    </div>
-                                                </template>
                                             </div>
-                                        </div>
+
+                                            <!-- Expanded Content: Simple heading and related to -->
+                                            <div class="accordion-content-activity slds-p-around_small">
+                                                <div class="slds-grid slds-grid_vertical">
+                                                    <div class="slds-grid slds-grid_align-spread">
+                                                        <h3 class="slds-text-heading_small">{activity.title}</h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </c-common-accordion>
                                     </template>
                                 </template>
                                 <template if:false={activitiesTabActivities.length}>
@@ -120,31 +136,52 @@
                                 </div>
                                 <template if:true={tasksTabActivities.length}>
                                     <template for:each={tasksTabActivities} for:item="activity">
-                                        <div key={activity.id}
-                                            class="slds-box slds-box_x-small slds-m-bottom_small activity-item">
-                                            <div class="slds-grid slds-grid_vertical">
-                                                <div class="slds-grid slds-grid_align-spread">
+                                        <c-common-accordion key={activity.id} variant="activity-item" is-collapsed-by-default="true">
+                                            <!-- Trigger: Clickable activity item -->
+                                            <div slot="trigger" class="slds-box slds-box_x-small activity-item">
+                                                <div class="slds-grid slds-grid_vertical-align-center">
+                                                    <!-- Green circular icon with checklist -->
+                                                    <div class="slds-m-right_small">
+                                                        <div class="activity-icon-circle">
+                                                            <lightning-icon icon-name="utility:task" 
+                                                                alternative-text="Activity" 
+                                                                size="small"
+                                                                class="activity-icon">
+                                                            </lightning-icon>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Title and info -->
                                                     <div class="slds-col slds-grow">
-                                                        <h3 class="slds-text-heading_small">{activity.title}</h3>
+                                                        <a href="#" 
+                                                            class="slds-text-heading_small slds-text-link" 
+                                                            onclick={handleTitleClick}>
+                                                            {activity.title}
+                                                        </a>
                                                         <template if:true={activity.related_to}>
                                                             <p class="slds-text-body_small slds-m-top_xx-small">
                                                                 Related to:
-                                                                <a href="#"
-                                                                    class="slds-text-link">{activity.related_to.name}
-                                                                    ({activity.related_to.id})</a>
+                                                                <a href="#" class="slds-text-link">{activity.related_to.name} ({activity.related_to.id})</a>
                                                             </p>
                                                         </template>
                                                     </div>
-
                                                 </div>
-
-                                                <template if:true={activity.completed_at}>
-                                                    <div class="slds-text-body_small slds-m-top_xx-small">
-                                                        <strong>Completed:</strong> {activity.formattedCompletedAt}
-                                                    </div>
-                                                </template>
                                             </div>
-                                        </div>
+
+                                            <!-- Expanded Content: Simple heading and related to -->
+                                            <div class="accordion-content-activity slds-p-around_small">
+                                                <div class="slds-grid slds-grid_vertical">
+                                                    <div class="slds-grid slds-grid_align-spread">
+                                                        <h3 class="slds-text-heading_small">{activity.title}</h3>
+                                                    </div>
+                                                    <template if:true={activity.related_to}>
+                                                        <p class="slds-text-body_small slds-m-top_xx-small">
+                                                            Related to:
+                                                            <a href="#" class="slds-text-link">{activity.related_to.name} ({activity.related_to.id})</a>
+                                                        </p>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </c-common-accordion>
                                     </template>
                                 </template>
                                 <template if:false={tasksTabActivities.length}>

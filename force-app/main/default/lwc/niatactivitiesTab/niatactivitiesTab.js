@@ -303,5 +303,9 @@ export default class ActivitiesTab extends LightningElement {
         return this.currentTab === 'agent_task' ? this.currentTabPaginationDisplay : { start: 0, end: 0, total: 0 };
     }
 
+    handleTitleClick(event) {
+        // Prevent default anchor behavior but allow event to bubble to accordion toggle
+        event.preventDefault();
+    }
 
 }
