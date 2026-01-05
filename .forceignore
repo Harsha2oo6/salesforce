@@ -1,0 +1,16 @@
+# Exclude test files from deployment
+**/__tests__/**
+**/*.test.js
+
+# Exclude Jest configuration and coverage
+coverage/
+**/jest.config.js
+
+# Exclude node_modules
+node_modules/
+
+# Exclude local development files
+.localdevserver/
+.sf/
+.sfdx/
+

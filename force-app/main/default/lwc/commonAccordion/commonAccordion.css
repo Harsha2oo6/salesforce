@@ -1,15 +1,35 @@
+/* Standard Variant Styles */
+.accordion-wrapper {
+    /* Standard variant wrapper */
+}
+
 .accordion-header {
     cursor: pointer;
     background-color: var(--lwc-colorBackgroundAlt, #ffffff);
-    border-left: 3px solid var(--lwc-colorBrand, #0176d3);
 }
 
-.accordion-header:hover {
-    background-color: var(--lwc-colorBackgroundRowHover, #f3f3f3);
+/* Activity Item Variant Styles */
+.accordion-wrapper-activity {
+    /* No border styles for activity-item variant */
 }
 
+.accordion-trigger {
+    cursor: pointer;
+    /* No border, no background - parent provides the styling via slot */
+}
+
+.accordion-trigger:hover {
+    /* Parent controls hover state */
+}
+
+/* Content Styles */
 .accordion-content {
     background-color: var(--lwc-colorBackgroundAlt, #ffffff);
     border-radius: 0px 0px 8px 8px !important;
     border: none !important;
+}
+
+.accordion-content-activity {
+    /* Activity variant content - regular card styling */
+    margin-top: 0.5rem;
 }

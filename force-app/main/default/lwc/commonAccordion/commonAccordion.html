@@ -1,20 +1,30 @@
 <template>
-    <div class="slds-m-bottom_medium">
-        <div class="slds-box slds-box_x-small accordion-header" onclick={handleToggle} role="button" tabindex="0"
-            onkeydown={handleKeyDown}>
-            <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
-                <div class="slds-grid slds-grid_vertical-align-center">
-                    <lightning-icon icon-name={iconName} alternative-text="Toggle" size="x-small"
-                        class="slds-m-right_x-small">
-                    </lightning-icon>
-                    <h3 class="slds-text-heading_small">{title}</h3>
+    <div class={wrapperClass}>
+        <!-- Standard Variant: Box header with chevron -->
+        <template if:true={isStandardVariant}>
+            <div class="slds-box slds-box_x-small accordion-header" onclick={handleToggle} role="button" tabindex="0"
+                onkeydown={handleKeyDown}>
+                <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                    <div class="slds-grid slds-grid_vertical-align-center">
+                        <lightning-icon icon-name={iconName} alternative-text="Toggle" size="x-small"
+                            class="slds-m-right_x-small">
+                        </lightning-icon>
+                        <h3 class="slds-text-heading_small">{title}</h3>
+                    </div>
                 </div>
             </div>
-        </div>
+        </template>
 
+        <!-- Activity Item Variant: Anchor/heading (provided by parent via slot) -->
+        <template if:true={isActivityItemVariant}>
+            <div class="accordion-trigger" role="button" onkeydown={handleKeyDown} onclick={handleToggle}>
+                <slot name="trigger"></slot>
+            </div>
+        </template>
+
+        <!-- Expanded content (same for both variants) -->
         <template if:true={isExpanded}>
-            <div class="slds-box slds-box_x-small accordion-content">
-                <!-- Expanded content -->
+            <div class={contentClass}>
                 <slot></slot>
             </div>
         </template>
