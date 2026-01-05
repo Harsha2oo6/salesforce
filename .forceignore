@@ -14,3 +14,7 @@ node_modules/
 .sf/
 .sfdx/
 
+
+**/jsconfig.json
+
+**/.eslintrc.json

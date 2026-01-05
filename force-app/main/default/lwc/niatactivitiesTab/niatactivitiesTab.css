@@ -20,6 +20,7 @@
 .activity-icon {
     --slds-c-icon-color-foreground-default: white;
     color: white;
+    transform: scale(0.7);
 }
 
 .activity-icon svg {

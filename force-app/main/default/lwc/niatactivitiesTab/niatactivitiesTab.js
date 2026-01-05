@@ -12,22 +12,26 @@ export default class ActivitiesTab extends LightningElement {
             allActivities: [],
             displayedActivities: [],
             currentPage: 1,
+            totalRecords: 0,
+            hasMore: false,
             filters: {
                 fromDate: null,
                 toDate: null,
                 offset: 0,
-                limit: 10
+                limit: 100
             }
         },
         'agent_task': {
             allActivities: [],
             displayedActivities: [],
             currentPage: 1,
+            totalRecords: 0,
+            hasMore: false,
             filters: {
                 fromDate: null,
                 toDate: null,
                 offset: 0,
-                limit: 10
+                limit: 100 // Load more items from server to enable client-side pagination
             }
         }
     };
@@ -37,7 +41,6 @@ export default class ActivitiesTab extends LightningElement {
     @track currentTab = 'lead_activity'; // Tab value is now the category enum
     @track previousTab = 'lead_activity';
     
-    @track totalRecords = 0;
     @track showFilterModal = false;
 
     get tabs() {
@@ -61,10 +64,7 @@ export default class ActivitiesTab extends LightningElement {
     }
 
     connectedCallback() {
-        // Initialize limit for all tabs from configurable RECORDS_PER_PAGE
-        Object.keys(this.tabData).forEach(tabKey => {
-            this.tabData[tabKey].filters.limit = this.RECORDS_PER_PAGE;
-        });
+        // Limit is already set in tabData initialization
     }
 
     // Computed properties for wire service reactivity
@@ -112,27 +112,40 @@ export default class ActivitiesTab extends LightningElement {
                 // Deep clone to convert Proxy objects to plain objects
                 const newActivities = JSON.parse(JSON.stringify(parsedData.activities || []));
                 
-                // Store total records for pagination display
-                this.totalRecords = parsedData.total_records || 0;
-                
                 // Get existing data for current tab before updating
                 const existingData = this.currentTabData.allActivities;
                 
                 // Check if this is a tab switch (tab changed) vs filter change
                 const isTabSwitch = this.currentTab !== this.previousTab;
                 
-                // Check if data actually changed (filters changed)
+                // Check if data actually changed (filters changed) by comparing IDs
+                const existingIds = existingData.map(a => a.id).sort();
+                const newIds = newActivities.map(a => a.id).sort();
                 const dataChanged = existingData.length === 0 || 
-                    JSON.stringify(existingData.map(a => a.id).sort()) !== 
-                    JSON.stringify(newActivities.map(a => a.id).sort());
+                    JSON.stringify(existingIds) !== JSON.stringify(newIds);
                 
-                // Store new activities for current tab
-                this.currentTabData.allActivities = newActivities;
+                // If filters changed or first load, replace all activities
+                // Otherwise, accumulate (for Load More functionality)
+                if (dataChanged || existingData.length === 0 || this.currentTabData.filters.offset === 0) {
+                    // Replace all activities (new filter or first load)
+                    this.currentTabData.allActivities = newActivities;
+                    this.currentTabData.totalRecords = parsedData.total_records || 0;
+                    this.currentTabData.hasMore = parsedData.has_more || false;
+                    this.resetPaginationForCurrentTab();
+                } else {
+                    // Accumulate activities (Load More clicked)
+                    // Merge new activities, avoiding duplicates
+                    const existingIdsSet = new Set(existingIds);
+                    const uniqueNewActivities = newActivities.filter(a => !existingIdsSet.has(a.id));
+                    this.currentTabData.allActivities = [...existingData, ...uniqueNewActivities];
+                    this.currentTabData.totalRecords = parsedData.total_records || this.currentTabData.totalRecords;
+                    this.currentTabData.hasMore = parsedData.has_more || false;
+                }
                 
                 // Only reset pagination if filters changed or first load
-                // Preserve page number when just switching tabs
+                // Preserve page number when just switching tabs or loading more
                 if (!(isTabSwitch && existingData.length > 0 && !dataChanged)) {
-                    if (dataChanged || existingData.length === 0) {
+                    if ((dataChanged || existingData.length === 0) && this.currentTabData.filters.offset === 0) {
                         this.resetPaginationForCurrentTab();
                     }
                 }
@@ -141,7 +154,7 @@ export default class ActivitiesTab extends LightningElement {
                 // This ensures next wire execution knows we're not switching tabs anymore
                 this.previousTab = this.currentTab;
                 
-                // Update displayed activities (accumulating style)
+                // Update displayed activities (client-side pagination)
                 this.updateDisplayedActivities();
                 
                 this.error = undefined;
@@ -232,9 +245,15 @@ export default class ActivitiesTab extends LightningElement {
     }
 
     handleLoadMore() {
+        // Check if we have more items loaded client-side
         if (this.currentTabData.displayedActivities.length < this.currentTabData.allActivities.length) {
+            // Show more from already loaded items (client-side pagination)
             this.currentTabData.currentPage++;
             this.updateDisplayedActivities();
+        } else if (this.currentTabData.hasMore) {
+            // Load more from server (server-side pagination)
+            this.currentTabData.filters.offset = this.currentTabData.allActivities.length;
+            // Wire will automatically re-execute with new offset
         }
     }
 
@@ -253,7 +272,12 @@ export default class ActivitiesTab extends LightningElement {
     }
 
     get showLoadMoreButton() {
-        return this.currentTabData.displayedActivities.length < this.currentTabData.allActivities.length;
+        const tabData = this.currentTabData;
+        // Show button if:
+        // 1. We have more items loaded client-side, OR
+        // 2. Server has more items (hasMore flag)
+        return (tabData.displayedActivities.length < tabData.allActivities.length) || 
+               (tabData.hasMore === true);
     }
 
     get loadMoreButtonClass() {
@@ -287,10 +311,15 @@ export default class ActivitiesTab extends LightningElement {
 
     get currentTabPaginationDisplay() {
         const count = this.currentTabActivities.length;
+        const currentPage = this.currentTabData.currentPage;
+        const totalRecords = this.currentTabData.totalRecords || this.currentTabData.allActivities.length;
+        const start = count > 0 ? ((currentPage - 1) * this.RECORDS_PER_PAGE + 1) : 0;
+        const end = count > 0 ? Math.min(currentPage * this.RECORDS_PER_PAGE, totalRecords) : 0;
+        
         return {
-            start: count > 0 ? 1 : 0,
-            end: count,
-            total: this.totalRecords || this.currentTabData.allActivities.length
+            start: start,
+            end: end,
+            total: totalRecords
         };
     }
     
