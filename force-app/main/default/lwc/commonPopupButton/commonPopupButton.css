@@ -21,19 +21,6 @@
     background-color: rgba(0, 0, 0, 0.6);
 }
 
-/* Call Status Container */
-.call-status-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem 0;
-    text-align: center;
+.modal-content {
+    min-width: 300px;
 }
-
-/* Call Status Messages */
-.slds-text-heading_small {
-    margin: 1rem 0;
-    text-align: center;
-}
-
