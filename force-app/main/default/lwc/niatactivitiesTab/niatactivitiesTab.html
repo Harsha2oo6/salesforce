@@ -237,25 +237,39 @@
                         <lightning-layout-item size="12" small-device-size="12" medium-device-size="6"
                             large-device-size="6">
                             <lightning-input label="From Date" type="date" value={filters.fromDate}
-                                data-filter="fromDate" onchange={handleFilterChange}>
+                                data-filter="fromDate">
                             </lightning-input>
                         </lightning-layout-item>
                         <lightning-layout-item size="12" small-device-size="12" medium-device-size="6"
                             large-device-size="6">
-                            <lightning-input label="To Date" type="date" value={filters.toDate} data-filter="toDate"
-                                onchange={handleFilterChange}>
+                            <lightning-input label="To Date" type="date" value={filters.toDate} data-filter="toDate">
                             </lightning-input>
                         </lightning-layout-item>
                     </lightning-layout>
                 </div>
-                <footer class="slds-modal__footer">
-                    <lightning-button label="Clear Filters" variant="neutral" onclick={clearFilters}>
+                <footer class="slds-modal__footer responsive-footer">
+                    <lightning-button
+                        class="footer-btn"
+                        label="Clear Filters"
+                        variant="neutral"
+                        onclick={clearFilters}>
                     </lightning-button>
-                    <lightning-button label="Apply Filters" variant="brand" onclick={applyFilters}>
+                
+                    <lightning-button
+                        class="footer-btn"
+                        label="Apply Filters"
+                        variant="brand"
+                        onclick={applyFilters}>
                     </lightning-button>
-                    <lightning-button label="Cancel" variant="neutral" onclick={closeFilterModal}>
+                
+                    <lightning-button
+                        class="footer-btn"
+                        label="Close"
+                        variant="neutral"
+                        onclick={closeFilterModal}>
                     </lightning-button>
                 </footer>
+                
             </div>
         </section>
         <div class="slds-backdrop slds-backdrop_open" onclick={handleModalBackdropClick}></div>

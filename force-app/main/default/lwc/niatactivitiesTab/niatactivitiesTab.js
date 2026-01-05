@@ -136,16 +136,6 @@ export default class ActivitiesTab extends LightningElement {
         // Each tab's data is preserved in tabData object
     }
 
-    handleFilterChange(event) {
-        const filterName = event.currentTarget.dataset.filter;
-        const filterValue = event.target.value || null;
-        
-        // Update filter value (don't reset offset here, will be reset on Apply)
-        this.currentTabData.filters = { 
-            ...this.currentTabData.filters, 
-            [filterName]: filterValue
-        };
-    }
 
     handlePrevious() {
         if (this.currentTabData.currentPage > 1) {
@@ -182,9 +172,18 @@ export default class ActivitiesTab extends LightningElement {
     }
 
     applyFilters() {
+        // Read current values from the lightning-input elements in the modal
+        const fromDateInput = this.template.querySelector('lightning-input[data-filter="fromDate"]');
+        const toDateInput = this.template.querySelector('lightning-input[data-filter="toDate"]');
+        
+        const fromDate = fromDateInput?.value || null;
+        const toDate = toDateInput?.value || null;
+        
         // Reset offset to 0 and clear existing data when applying new filters
         this.currentTabData.filters = { 
             ...this.currentTabData.filters, 
+            fromDate: fromDate,
+            toDate: toDate,
             offset: 0 
         };
         this.currentTabData.allActivities = [];
