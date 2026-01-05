@@ -1,0 +1,58 @@
+/* Custom Form Component Styles */
+
+.custom-form-container {
+    padding: 0.5rem;
+}
+
+/* Form element spacing */
+.slds-form-element {
+    margin-bottom: 0.75rem;
+}
+
+/* Phone input with country code prefix */
+.phone-input-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.phone-prefix {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 3rem;
+    height: 2rem;
+    padding: 0 0.5rem;
+    background-color: var(--slds-g-color-neutral-base-80, #f3f3f3);
+    border: 1px solid var(--slds-g-color-border-base-1, #c9c9c9);
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--slds-g-color-neutral-base-30, #444);
+    margin-bottom: 0.125rem;
+}
+
+.phone-input-wrapper lightning-input.has-prefix {
+    flex: 1;
+}
+
+/* Ensure consistent input widths */
+lightning-input,
+lightning-combobox,
+lightning-textarea {
+    width: 100%;
+}
+
+/* Submit button alignment */
+.slds-form-element:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive grid for larger screens */
+@media (min-width: 768px) {
+    .custom-form-container.two-column .slds-form {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+

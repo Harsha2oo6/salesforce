@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata">
+    <masterLabel>Product Data Channel</masterLabel>
+    <description>Lightning Message Channel for sharing Product Details data across LWC components on the same page. Eliminates duplicate Apex calls by publishing data once from a provider component.</description>
+    <isExposed>true</isExposed>
+    <lightningMessageFields>
+        <fieldName>messageType</fieldName>
+        <description>Type of message: DATA_RESPONSE or
+            DATA_REQUEST</description>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>payload</fieldName>
+        <description>The full Apex response object containing
+        key_fields and sections</description>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>status</fieldName>
+        <description>Data loading status: loading, success, or error</description>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <fieldName>error</fieldName>
+        <description>Error details if status is error</description>
+    </lightningMessageFields>
+</LightningMessageChannel>

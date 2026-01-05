@@ -1,0 +1,226 @@
+<template>
+    <c-tabs-container tabs={tabs} active-tab-value={activeTabValue} variant="standard" ontabchange={handleTabChange}>
+
+        <!-- Activities Tab Content -->
+        <div slot="lead_activity">
+            <div class="slds-m-top_medium">
+
+                <!-- Activities List -->
+                <template if:true={isLoading}>
+                    <c-common-loader loader-size="medium"></c-common-loader>
+                </template>
+
+                <template if:true={error}>
+                    <div class="slds-box slds-box_x-small slds-theme_error slds-m-top_medium">
+                        <p class="slds-text-color_error">
+                            Error loading activities: {errorMessage}
+                        </p>
+                    </div>
+                </template>
+
+                <template if:false={isLoading}>
+                    <template if:false={error}>
+                        <lightning-card>
+                            <div class="slds-p-around_medium">
+                                <div class="slds-m-bottom_small slds-text-align_right">
+                                    <lightning-button-icon icon-name="utility:settings"
+                                        alternative-text="Filter Settings" variant="border-filled" size="medium"
+                                        onclick={openFilterModal} title="Filter Settings">
+                                    </lightning-button-icon>
+                                </div>
+                                <template if:true={activitiesTabActivities.length}>
+                                    <template for:each={activitiesTabActivities} for:item="activity">
+                                        <div key={activity.id}
+                                            class="slds-box slds-box_x-small slds-m-bottom_small activity-item">
+                                            <div class="slds-grid slds-grid_vertical">
+                                                <div class="slds-grid slds-grid_align-spread">
+                                                    <div class="slds-col slds-grow">
+                                                        <h3 class="slds-text-heading_small">{activity.title}</h3>
+                                                        <template if:true={activity.related_to}>
+                                                            <p class="slds-text-body_small slds-m-top_xx-small">
+                                                                Related to:
+                                                                <a href="#"
+                                                                    class="slds-text-link">{activity.related_to.name}
+                                                                    ({activity.related_to.id})</a>
+                                                            </p>
+                                                        </template>
+                                                    </div>
+                                                </div>
+
+                                                <template if:true={activity.completed_at}>
+                                                    <div class="slds-text-body_small slds-m-top_xx-small">
+                                                        <strong>Completed:</strong> {activity.formattedCompletedAt}
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </template>
+                                <template if:false={activitiesTabActivities.length}>
+                                    <p class="slds-text-color_weak slds-text-align_center">No activities found</p>
+                                </template>
+
+                                <!-- Pagination -->
+                                <template if:true={activitiesTabActivities.length}>
+                                    <div class="slds-grid slds-grid_align-spread slds-m-top_medium">
+                                        <div class="slds-text-body_small">
+                                            Showing {activitiesTabPaginationDisplay.start} -
+                                            {activitiesTabPaginationDisplay.end} of
+                                            {activitiesTabPaginationDisplay.total}
+                                        </div>
+                                        <div>
+                                            <template if:true={showPreviousButton}>
+                                                <lightning-button label="Previous" onclick={handlePrevious}
+                                                    variant="neutral">
+                                                </lightning-button>
+                                            </template>
+                                            <template if:true={showLoadMoreButton}>
+                                                <lightning-button label="Load More" onclick={handleLoadMore}
+                                                    variant="brand" class={loadMoreButtonClass}>
+                                                </lightning-button>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </lightning-card>
+                    </template>
+                </template>
+            </div>
+        </div>
+
+        <!-- Tasks Tab Content -->
+        <div slot="agent_task">
+            <div class="slds-m-top_medium">
+
+                <!-- Loading State -->
+                <template if:true={isLoading}>
+                    <c-common-loader loader-size="medium"></c-common-loader>
+                </template>
+
+                <!-- Error State -->
+                <template if:true={error}>
+                    <div class="slds-box slds-box_x-small slds-theme_error slds-m-top_medium">
+                        <p class="slds-text-color_error">
+                            Error loading tasks: {errorMessage}
+                        </p>
+                    </div>
+                </template>
+                <!-- Tasks List -->
+                <template if:false={isLoading}>
+
+                    <template if:false={error}>
+                        <lightning-card>
+                            <div class="slds-p-around_medium">
+                                <div class="slds-m-bottom_small slds-text-align_right">
+                                    <lightning-button-icon icon-name="utility:settings"
+                                        alternative-text="Filter Settings" variant="border-filled" size="medium"
+                                        onclick={openFilterModal} title="Filter Settings">
+                                    </lightning-button-icon>
+                                </div>
+                                <template if:true={tasksTabActivities.length}>
+                                    <template for:each={tasksTabActivities} for:item="activity">
+                                        <div key={activity.id}
+                                            class="slds-box slds-box_x-small slds-m-bottom_small activity-item">
+                                            <div class="slds-grid slds-grid_vertical">
+                                                <div class="slds-grid slds-grid_align-spread">
+                                                    <div class="slds-col slds-grow">
+                                                        <h3 class="slds-text-heading_small">{activity.title}</h3>
+                                                        <template if:true={activity.related_to}>
+                                                            <p class="slds-text-body_small slds-m-top_xx-small">
+                                                                Related to:
+                                                                <a href="#"
+                                                                    class="slds-text-link">{activity.related_to.name}
+                                                                    ({activity.related_to.id})</a>
+                                                            </p>
+                                                        </template>
+                                                    </div>
+
+                                                </div>
+
+                                                <template if:true={activity.completed_at}>
+                                                    <div class="slds-text-body_small slds-m-top_xx-small">
+                                                        <strong>Completed:</strong> {activity.formattedCompletedAt}
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </template>
+                                <template if:false={tasksTabActivities.length}>
+                                    <p class="slds-text-color_weak slds-text-align_center">No tasks found</p>
+                                </template>
+
+                                <!-- Pagination -->
+                                <template if:true={tasksTabActivities.length}>
+                                    <div class="slds-grid slds-grid_align-spread slds-m-top_medium">
+                                        <div class="slds-text-body_small">
+                                            Showing {tasksTabPaginationDisplay.start} -
+                                            {tasksTabPaginationDisplay.end} of
+                                            {tasksTabPaginationDisplay.total}
+                                        </div>
+                                        <div>
+                                            <template if:true={showPreviousButton}>
+                                                <lightning-button label="Previous" onclick={handlePrevious}
+                                                    variant="neutral">
+                                                </lightning-button>
+                                            </template>
+                                            <template if:true={showLoadMoreButton}>
+                                                <lightning-button label="Load More" onclick={handleLoadMore}
+                                                    variant="brand" class={loadMoreButtonClass}>
+                                                </lightning-button>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </lightning-card>
+                    </template>
+                </template>
+            </div>
+        </div>
+    </c-tabs-container>
+
+    <!-- Filter Modal -->
+    <template if:true={showFilterModal}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium"
+            aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                        title="Close" onclick={closeFilterModal}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close"
+                            size="small"></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Filter Settings</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <lightning-layout multiple-rows>
+                        <lightning-layout-item size="12" small-device-size="12" medium-device-size="6"
+                            large-device-size="6">
+                            <lightning-input label="From Date" type="date" value={filters.fromDate}
+                                data-filter="fromDate" onchange={handleFilterChange}>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="12" small-device-size="12" medium-device-size="6"
+                            large-device-size="6">
+                            <lightning-input label="To Date" type="date" value={filters.toDate} data-filter="toDate"
+                                onchange={handleFilterChange}>
+                            </lightning-input>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Clear Filters" variant="neutral" onclick={clearFilters}>
+                    </lightning-button>
+                    <lightning-button label="Apply Filters" variant="brand" onclick={applyFilters}>
+                    </lightning-button>
+                    <lightning-button label="Cancel" variant="neutral" onclick={closeFilterModal}>
+                    </lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" onclick={handleModalBackdropClick}></div>
+    </template>
+</template>

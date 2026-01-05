@@ -1,0 +1,9 @@
+<template>
+    <lightning-card title="Custom page" icon-name="utility:settings" variant="narrow">
+         <div class="slds-p-around_medium slds-grid_align-end slds-grid_vertical-align-center">
+            <c-common-popup-button button-label="Call" >
+                <c-niat-call-steps onpayloadtosendtoparent={handlePayloadToSendToParent}></c-niat-call-steps>
+            </c-common-popup-button>
+        </div> 
+    </lightning-card>
+</template>

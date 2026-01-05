@@ -1,0 +1,159 @@
+<template>
+    <div class="custom-form-container">
+        <template if:true={hasFields}>
+            <div class="slds-form" role="form">
+                <template for:each={processedFields} for:item="field">
+                    <div key={field.key} class="slds-form-element slds-m-bottom_small">
+                        
+                        <!-- TEXT INPUT -->
+                        <template if:true={field.isText}>
+                            <lightning-input
+                                type="text"
+                                label={field.label}
+                                name={field.field}
+                                data-field={field.field}
+                                placeholder={field.placeholder}
+                                value={field.currentValue}
+                                max-length={field.maxLength}
+                                required={field.required}
+                                variant={field.labelVariant}
+                                onchange={handleInputChange}>
+                            </lightning-input>
+                        </template>
+
+                        <!-- EMAIL INPUT -->
+                        <template if:true={field.isEmail}>
+                            <lightning-input
+                                type="email"
+                                label={field.label}
+                                name={field.field}
+                                data-field={field.field}
+                                placeholder={field.placeholder}
+                                value={field.currentValue}
+                                required={field.required}
+                                variant={field.labelVariant}
+                                onchange={handleInputChange}>
+                            </lightning-input>
+                        </template>
+
+                        <!-- PHONE INPUT -->
+                        <template if:true={field.isPhone}>
+                            <div class="phone-input-wrapper">
+                                <template if:true={field.phonePrefix}>
+                                    <span class="phone-prefix">{field.phonePrefix}</span>
+                                </template>
+                                <lightning-input
+                                    type="tel"
+                                    label={field.label}
+                                    name={field.field}
+                                    data-field={field.field}
+                                    placeholder={field.placeholder}
+                                    value={field.currentValue}
+                                    required={field.required}
+                                    variant={field.labelVariant}
+                                    class={field.phoneCssClass}
+                                    onchange={handleInputChange}>
+                                </lightning-input>
+                            </div>
+                        </template>
+
+                        <!-- SELECT / COMBOBOX -->
+                        <template if:true={field.isSelect}>
+                            <lightning-combobox
+                                label={field.label}
+                                name={field.field}
+                                data-field={field.field}
+                                placeholder={field.placeholder}
+                                value={field.currentValue}
+                                options={field.comboboxOptions}
+                                required={field.required}
+                                variant={field.labelVariant}
+                                onchange={handleComboboxChange}>
+                            </lightning-combobox>
+                        </template>
+
+                        <!-- DATE INPUT -->
+                        <template if:true={field.isDate}>
+                            <lightning-input
+                                type="date"
+                                label={field.label}
+                                name={field.field}
+                                data-field={field.field}
+                                placeholder={field.placeholder}
+                                value={field.currentValue}
+                                required={field.required}
+                                variant={field.labelVariant}
+                                onchange={handleInputChange}>
+                            </lightning-input>
+                        </template>
+
+                        <!-- TEXTAREA INPUT -->
+                        <template if:true={field.isTextarea}>
+                            <lightning-textarea
+                                label={field.label}
+                                name={field.field}
+                                data-field={field.field}
+                                placeholder={field.placeholder}
+                                value={field.currentValue}
+                                max-length={field.maxLength}
+                                required={field.required}
+                                variant={field.labelVariant}
+                                onchange={handleInputChange}>
+                            </lightning-textarea>
+                        </template>
+
+                        <!-- NUMBER INPUT -->
+                        <template if:true={field.isNumber}>
+                            <lightning-input
+                                type="number"
+                                label={field.label}
+                                name={field.field}
+                                data-field={field.field}
+                                placeholder={field.placeholder}
+                                value={field.currentValue}
+                                min={field.min}
+                                max={field.max}
+                                step={field.step}
+                                required={field.required}
+                                variant={field.labelVariant}
+                                onchange={handleInputChange}>
+                            </lightning-input>
+                        </template>
+
+                        <!-- CHECKBOX INPUT -->
+                        <template if:true={field.isCheckbox}>
+                            <lightning-input
+                                type="checkbox"
+                                label={field.label}
+                                name={field.field}
+                                data-field={field.field}
+                                checked={field.currentValue}
+                                required={field.required}
+                                onchange={handleCheckboxChange}>
+                            </lightning-input>
+                        </template>
+
+                    </div>
+                </template>
+
+                <!-- SUBMIT BUTTON -->
+                <template if:true={showSubmitButton}>
+                    <div class="slds-form-element slds-m-top_medium">
+                        <lightning-button
+                            variant="brand"
+                            label={submitButtonLabel}
+                            onclick={handleSubmit}>
+                        </lightning-button>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <!-- NO FIELDS MESSAGE -->
+        <template if:false={hasFields}>
+            <div class="slds-text-body_regular slds-text-color_weak">
+                No form fields configured.
+            </div>
+        </template>
+    </div>
+</template>

@@ -1,0 +1,15 @@
+<template>
+    <div class="slds-grid slds-grid_vertical slds-align_absolute-center">
+        <div class="spinnerHolder slds-grid-cell slds-m-bottom_small">
+            <lightning-spinner class="spinnerClass" alternative-text="Loading" size={loaderSize}>
+            </lightning-spinner>
+        </div>
+        <template if:true={hasLoaderText}>
+            <div class="slds-grid-cell">
+                <p class="slds-text-heading_small">
+                    {loaderText}
+                </p>
+            </div>
+        </template>
+    </div>
+</template>

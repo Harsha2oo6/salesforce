@@ -1,0 +1,263 @@
+–get /productDetails/api
+
+{
+    "key_fields": [
+        {
+            "name": "id",
+            "value": "12345",
+            "order": 1,
+            "type": "string"
+        },
+        {
+            "name": "dm_phone_number",
+            "value": "+91-9876543210",
+            "order": 2,
+            "type": "phone"
+        },
+        {
+            "name": "influencer_number",
+            "value": "INF-20489",
+            "order": 3,
+            "type": "string"
+        },
+        {
+            "name": "program",
+            "value": "Full Stack Web Development",
+            "order": 4,
+            "type": "string"
+        },
+        {
+            "name": "payment_plan",
+            "value": "6 Months EMI",
+            "order": 5,
+            "type": "string"
+        }
+    ],
+    "sections": [
+        {
+            "section_name": "Personal Details",
+            "fields": [
+                {
+                    "name": "first_name",
+                    "value": "Rajat",
+                    "type": "string"
+                },
+                {
+                    "name": "age",
+                    "value": 23,
+                    "type": "number"
+                },
+                {
+                    "name": "contact_details",
+                    "value": [
+                        {
+                            "name": "phone_number",
+                            "value": "+91-9876543210",
+                            "type": "phone"
+                        },
+                        {
+                            "name": "parent_phone_number",
+                            "value": "+91-9502482445",
+                            "type": "phone"
+                        },
+                        {
+                            "name": "alternate_phone_number",
+                            "value": "+91-9100164925",
+                            "type": "phone"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ]
+        },
+        {
+            "section_name": "Opportunity Information",
+            "fields": [
+                {
+                    "name": "opportunity_name",
+                    "value": "test1",
+                    "type": "string"
+                },
+                {
+                    "name": "account_name",
+                    "value": "Rajat Account",
+                    "type": "string"
+                },
+                {
+                    "name": "contact_id",
+                    "value": "006e1000001BRGAA0",
+                    "type": "string"
+                },
+                {
+                    "name": "stage",
+                    "value": "Yet To Decide To Pay",
+                    "type": "string"
+                },
+                {
+                    "name": "close_date",
+                    "value": "2025-10-18",
+                    "type": "date"
+                },
+                {
+                    "name": "amount",
+                    "value": 75000,
+                    "type": "number"
+                },
+                {
+                    "name": "language",
+                    "value": "English",
+                    "type": "string"
+                },
+                {
+                    "name": "phone_number",
+                    "value": "+91-9876543210",
+                    "type": "phone"
+                },
+                {
+                    "name": "program_uid",
+                    "value": "PROG-FSWD-2025",
+                    "type": "string"
+                },
+                {
+                    "name": "cycle",
+                    "value": "Cycle-2 (May 2nd)",
+                    "type": "string"
+                },
+                {
+                    "name": "performance_bucket",
+                    "value": "High Intent",
+                    "type": "string"
+                },
+                {
+                    "name": "discovery_completed",
+                    "value": false,
+                    "type": "boolean"
+                },
+                {
+                    "name": "city_town_village",
+                    "value": "Hyderabad",
+                    "type": "string"
+                },
+                {
+                    "name": "orientation_session_attended_language",
+                    "value": "English",
+                    "type": "string"
+                }
+            ]
+        }
+    ]
+}
+
+
+
+
+
+–get/activities/v1
+  -single api for task and activities tab controlled by filters like
+?activity_category=lead_activity | agent_task
+&from_date=2025-01-01
+&to_date=2025-01-31
+&offset=0
+&limit=10
+
+
+
+{
+    "offset": 0,
+    "limit": 10,
+    "total_records": 42,
+    "has_more": true,
+    "next_offset": 10,
+    "activities": [
+        {
+            "id": "act_001",
+            "activity_category": "lead_activity",
+            "title": "Student Follow-Up Call",
+            "related_to": {
+                "type": "lead",
+                "id": "NW0000391",
+                "name": "Swamy"
+            },
+            "assigned_to": "Rajat Kaushik",
+            "status": "upcoming",
+            "due_date": "2025-01-05",
+            "created_at": "2025-01-02T10:15:00Z"
+        }
+      
+    ]
+}
+{
+    "id": "act_002",
+    "activity_category": "agent_task",
+    "title": "Fix production bug",
+    "assigned_to": "Ankit Sharma",
+    "status": "completed",
+    "due_date": "2025-01-06",
+    "completed_at": "2025-01-06T18:30:00Z"
+}
+form_fields=[
+    {
+        "type": "text",
+        "field": "fullName",
+        "label": "Full Name",
+        "shouldShowLabel": true,
+        "placeholder": "Enter full name",
+        "maxLength": 100
+    },
+    {
+        "type": "email",
+        "field": "email",
+        "label": "Email Address",
+        "shouldShowLabel": true,
+        "placeholder": "example@email.com"
+    },
+    {
+        "type": "phone",
+        "field": "phoneNumber",
+        "label": "Phone Number",
+        "shouldShowLabel": true,
+        "placeholder": "Enter phone number",
+        "countryCode": "+91"
+    },
+    {
+        "type": "select",
+        "field": "class",
+        "label": "Class",
+        "shouldShowLabel": true,
+        "placeholder": "---Select---",
+        "options": [
+            "10th",
+            "11th",
+            "12th",
+            "Diploma",
+            "Undergraduate",
+            "Postgraduate"
+        ]
+    },
+    {
+        "type": "select",
+        "field": "passingYear",
+        "label": "Passing Year",
+        "shouldShowLabel": true,
+        "placeholder": "---Select---",
+        "options": [
+            "2028",
+            "2027",
+            "2026",
+            "2025",
+            "2024",
+            "2023",
+            "2022",
+            "2021",
+            "2020",
+            "2019"
+        ]
+    },
+    {
+        "type": "date",
+        "field": "dateOfBirth",
+        "label": "Date of Birth",
+        "shouldShowLabel": true,
+        "placeholder": ""
+    }
+]

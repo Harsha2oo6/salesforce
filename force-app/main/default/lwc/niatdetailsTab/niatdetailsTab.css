@@ -1,0 +1,19 @@
+/* Styles for accordion slot content - used in accordion-items-container and accordion-item */
+.accordion-items-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--lwc-spacingXSmall, 0.5rem);
+}
+
+.accordion-item {
+    width: calc(50% - var(--lwc-spacingXSmall, 0.5rem));
+    box-sizing: border-box;
+    border-left: 2px solid var(--lwc-colorBorder, #dddbda);
+    background-color: var(--lwc-colorBackground, #f3f3f3);
+    min-width: 0;
+    cursor: pointer;
+}
+
+.accordion-item:hover {
+    background-color: #f1f0f0;
+}

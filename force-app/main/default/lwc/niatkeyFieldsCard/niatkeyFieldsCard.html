@@ -1,0 +1,38 @@
+<template>
+    <lightning-card title={cardTitle} icon-name="utility:key">
+        <div class="slds-p-around_medium">
+            <!-- Loading State -->
+            <template if:true={isLoading}>
+                <c-common-loader loader-size="medium"></c-common-loader>
+            </template>
+
+            <!-- Error State -->
+            <template if:true={error}>
+                <div class="slds-box slds-box_x-small slds-theme_error">
+                    <p class="slds-text-color_error">
+                        Error loading key fields: {errorMessage}
+                    </p>
+                </div>
+            </template>
+
+            <!-- Data Display -->
+            <template if:false={isLoading}>
+                <template if:false={error}>
+                    <template if:true={hasKeyFields}>
+                        <template for:each={sortedKeyFields} for:item="field">
+                            <div key={field.order}
+                                class="slds-box slds-box_x-small slds-m-bottom_x-small key-field-row">
+                                <c-common-field-container item={field}></c-common-field-container>
+                            </div>
+                        </template>
+                    </template>
+                    <template if:false={hasKeyFields}>
+                        <div class="slds-text-align_center slds-p-around_medium">
+                            <p class="slds-text-color_weak">No key fields available</p>
+                        </div>
+                    </template>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>

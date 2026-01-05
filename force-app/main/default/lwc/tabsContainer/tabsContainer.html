@@ -1,0 +1,59 @@
+<template>
+    <template if:true={hasTabs}>
+        <lightning-tabset variant={variant} active-tab-value={activeTabValue}>
+            <!-- Details Tab -->
+            <template if:true={hasDetailsTab}>
+                <lightning-tab style="margin-right: 10px;" label="Details" value="details" onactive={handleTabActive}>
+                    <slot name="details"></slot>
+                </lightning-tab>
+            </template>
+            
+            <!-- Related Tab -->
+            <template if:true={hasRelatedTab}>
+                <lightning-tab label="Related" value="related" onactive={handleTabActive}>
+                    <slot name="related"></slot>
+                </lightning-tab>
+            </template>
+            
+            <!-- Call Logs Tab -->
+            <template if:true={hasCallLogsTab}>
+                <lightning-tab label="Call Logs" value="callLogs" onactive={handleTabActive}>
+                    <slot name="callLogs"></slot>
+                </lightning-tab>
+            </template>
+            
+            <!-- Remarks Tab -->
+            <template if:true={hasRemarksTab}>
+                <lightning-tab label="Remarks" value="remarks" onactive={handleTabActive}>
+                    <slot name="remarks"></slot>
+                </lightning-tab>
+            </template>
+            
+            <!-- Activities Tab -->
+            <template if:true={hasActivitiesTab}>
+                <lightning-tab style="margin-right: 10px;" label="Activities" value="lead_activity" onactive={handleTabActive}>
+                    <slot name="lead_activity"></slot>
+                </lightning-tab>
+            </template>
+            
+            <!-- Tasks Tab -->
+            <template if:true={hasTasksTab}>
+                <lightning-tab style="margin-right: 10px;" label="Tasks" value="agent_task" onactive={handleTabActive}>
+                    <slot name="agent_task"></slot>
+                </lightning-tab>
+            </template>
+            
+            <!-- Events Tab -->
+            <template if:true={hasEventsTab}>
+                <lightning-tab label="Events" value="events" onactive={handleTabActive}>
+                    <slot name="events"></slot>
+                </lightning-tab>
+            </template>
+        </lightning-tabset>
+    </template>
+    <template if:false={hasTabs}>
+        <div class="slds-text-align_center slds-p-around_medium">
+            <p class="slds-text-color_weak">No tabs available</p>
+        </div>
+    </template>
+</template>

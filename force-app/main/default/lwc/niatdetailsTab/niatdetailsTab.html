@@ -1,0 +1,47 @@
+<template>
+    <c-tabs-container tabs={tabs} active-tab-value="details">
+        <div slot="details">
+            <!-- Loading State -->
+            <template if:true={isLoading}>
+                <c-common-loader loader-size="medium"></c-common-loader>
+            </template>
+
+            <!-- Error State -->
+            <template if:true={error}>
+                <div class="slds-box slds-box_x-small slds-theme_error slds-m-around_medium">
+                    <p class="slds-text-color_error">
+                        Error loading product details: {errorMessage}
+                    </p>
+                </div>
+            </template>
+
+            <!-- Data Display -->
+            <template if:false={isLoading}>
+                <template if:false={error}>
+                    <!-- Sections (Accordions) -->
+                    <template if:true={hasSections}>
+                        <template for:each={sections} for:item="section">
+                            <c-common-accordion key={section.section_name} title={section.section_name}
+                                is-collapsed-by-default="false">
+                                <div class="slds-flex slds-wrap accordion-items-container">
+                                    <template if:true={section.hasFields}>
+                                        <template for:each={section.fields} for:item="field">
+                                            <div key={field.name} class="slds-box slds-box_x-small accordion-item">
+                                                <c-common-field-container item={field}></c-common-field-container>
+                                            </div>
+                                        </template>
+                                    </template>
+                                    <template if:false={section.hasFields}>
+                                        <p class="slds-text-color_weak slds-text-align_center slds-p-around_medium">
+                                            No data available for this section.
+                                        </p>
+                                    </template>
+                                </div>
+                            </c-common-accordion>
+                        </template>
+                    </template>
+                </template>
+            </template>
+        </div>
+    </c-tabs-container>
+</template>

@@ -1,0 +1,56 @@
+<template>
+    <lightning-card title="Student Details">
+
+        <lightning-tabset>
+
+            <!-- DETAILS TAB -->
+            <lightning-tab label="Details">
+                <lightning-record-view-form record-id={recordId} object-api-name="Student__c">
+
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-output-field field-name="Name"></lightning-output-field>
+                            <lightning-output-field field-name="Age__c"></lightning-output-field>
+                            <lightning-output-field field-name="Course__c"></lightning-output-field>
+                        </div>
+
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-output-field field-name="Branch__c"></lightning-output-field>
+                            <lightning-output-field field-name="Reg_No__c"></lightning-output-field>
+                        </div>
+                    </div>
+
+                </lightning-record-view-form>
+            </lightning-tab>
+
+            <!-- RELATED TAB -->
+            <lightning-tab label="Related" onactive={handleRelatedTabActive}>
+                <div class="slds-m-around_medium">
+
+                    <!-- LOADING STATE -->
+                    <template if:true={isLoading}>
+                        <c-common-loader loader-size="medium"></c-common-loader>
+                    </template>
+
+                    <!-- DATA DISPLAY -->
+                    <template if:false={isLoading}>
+
+                        <!-- BRANCH INFORMATION SECTION -->
+                        <c-collapsible-section title="Branch Information" items={branchInfoItems}
+                            empty-message="No branch information available for this student." onedit={handleEdit}>
+                        </c-collapsible-section>
+
+                        <!-- STUDENTS IN SAME BRANCH SECTION -->
+                        <c-collapsible-section title="Students in Same Branch" items={studentsInBranchItems}
+                            empty-message="No other students found in the same branch." onedit={handleEdit}>
+                        </c-collapsible-section>
+
+                    </template>
+
+                </div>
+            </lightning-tab>
+
+        </lightning-tabset>
+
+    </lightning-card>
+</template>

@@ -1,0 +1,15 @@
+.accordion-header {
+    cursor: pointer;
+    background-color: var(--lwc-colorBackgroundAlt, #ffffff);
+    border-left: 3px solid var(--lwc-colorBrand, #0176d3);
+}
+
+.accordion-header:hover {
+    background-color: var(--lwc-colorBackgroundRowHover, #f3f3f3);
+}
+
+.accordion-content {
+    background-color: var(--lwc-colorBackgroundAlt, #ffffff);
+    border-radius: 0px 0px 8px 8px !important;
+    border: none !important;
+}

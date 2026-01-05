@@ -1,0 +1,74 @@
+<template>
+    <div class="slds-m-bottom_medium">
+        <div 
+            class={computedTitleClass} 
+            onclick={handleToggle}>
+            <lightning-icon 
+                icon-name={iconName}
+                alternative-text="Toggle"
+                size="x-small"
+                class="slds-m-right_x-small">
+            </lightning-icon>
+            <h3>{title}</h3>
+        </div>
+        
+        <template if:true={isExpanded}>
+            <div class="section-content">
+                <!-- Key-Value List Mode: Render list if items are provided -->
+                <template if:true={isListMode}>
+                    <template if:true={hasData}>
+                        <ul class="key-value-list">
+                            <template for:each={items} for:item="item">
+                                <li key={item.label} class="key-value-item">
+                                    <div class="key-value-row">
+                                        <div class="key-value-content">
+                                            <span class="key-label">{item.label}</span>
+                                            <template if:true={item.isLink}>
+                                                <a href={item.linkUrl} class="value-link">{item.value}</a>
+                                            </template>
+                                            <template if:false={item.isLink}>
+                                                <span class="key-value">{item.value}</span>
+                                            </template>
+                                        </div>
+                                        <template if:true={item.isEditable}>
+                                            <lightning-button-icon 
+                                                icon-name="utility:edit"
+                                                alternative-text="Edit"
+                                                variant="border-filled"
+                                                size="x-small"
+                                                data-field={item.fieldName}
+                                                onclick={handleEdit}
+                                                class="edit-icon">
+                                            </lightning-button-icon>
+                                        </template>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+                    <template if:false={hasData}>
+                        <p class="empty-message">{emptyMessage}</p>
+                    </template>
+                </template>
+                
+                <!-- Datatable Mode: Render datatable if data and columns are provided -->
+                <template if:true={isDatatableMode}>
+                    <template if:true={hasData}>
+                        <lightning-datatable
+                            key-field={keyField}
+                            data={tableData}
+                            columns={tableColumns}
+                            hide-checkbox-column={hideCheckboxColumn}
+                            show-row-number-column={showRowNumberColumn}>
+                        </lightning-datatable>
+                    </template>
+                    <template if:false={hasData}>
+                        <p class="empty-message">{emptyMessage}</p>
+                    </template>
+                </template>
+                
+            </div>
+        </template>
+    </div>
+</template>
+

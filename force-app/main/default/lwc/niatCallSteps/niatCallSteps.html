@@ -1,0 +1,77 @@
+<template>
+    <div class="slds-modal__content slds-p-around_medium">
+
+        <!-- STEP 1: CALL OPTIONS -->
+        <template if:true={isCallOptions}>
+            <div class="slds-grid slds-align_absolute-center">
+                <lightning-button label="TATA Telecall" variant="brand" onclick={handleTataCall}>
+                </lightning-button>
+
+                <lightning-button class="slds-m-left_small" label="Direct Call" variant="neutral"
+                    onclick={handleDirectCall}>
+                </lightning-button>
+            </div>
+        </template>
+
+        <!-- STEP 2: SELECT NUMBER -->
+        <template if:true={isTataSelectNumber}>
+            <div class="slds-grid slds-grid_vertical
+                slds-align_absolute-center">
+                <lightning-radio-group label="Select Phone Number" options={phoneNumbers} value={selectedNumber}
+                    onchange={handleNumberSelect}>
+                </lightning-radio-group>
+
+                <lightning-button class="slds-m-top_medium" label="Continue" variant="brand"
+                    onclick={handleContinueAfterNumber} disabled={isContinueDisabled}>
+                </lightning-button>
+            </div>
+        </template>
+
+        <!-- STEP 3: CALLING -->
+        <template if:true={isTataCalling}>
+            <!-- CALL INITIATING STATE -->
+            <template if:true={isCallInitiating}>
+                <c-common-loader loader-text="📞 Call is being initiated…"></c-common-loader>
+            </template>
+
+            <!-- CALL INITIATED STATE -->
+            <template if:true={isCallInitiated}>
+                <c-common-loader loader-text="✅ Call initiated"></c-common-loader>
+            </template>
+
+            <!-- CALL COMPLETE STATE -->
+            <template if:true={isCallComplete}>
+                <div class="slds-m-top_medium slds-align_absolute-center">
+                    <lightning-button label="Call Success" variant="brand" onclick={handleContinueAfterCall}>
+                    </lightning-button>
+
+                    <lightning-button class="slds-m-left_small" label="Call Again" variant="neutral"
+                        onclick={handleCallAgain}>
+                    </lightning-button>
+                </div>
+            </template>
+        </template>
+
+        <!-- STEP 4: FORM -->
+        <template if:true={isForm}>
+            <div class="slds-form" role="form">
+                <lightning-input type="text" label="Full Name" name="fullName" data-field="fullName"
+                    placeholder="Enter full name" value={fullName} onchange={handleFullNameChange}></lightning-input>
+                <template if:false={hasSelectedNumber}>
+                    <lightning-combobox label="Select Phone Number" options={phoneNumbers} value={selectedNumber}
+                        onchange={handleNumberSelect}></lightning-combobox>
+                </template>
+                <template if:true={hasSelectedNumber}>
+                    <lightning-input type="phone" label="Phone Number" name="phoneNumber"
+                        placeholder="Enter phone number" value={selectedNumber}
+                        onchange={handlePhoneNumberChange}></lightning-input>
+                </template>
+                <lightning-button label="Submit" variant="brand" onclick={handleFormSubmit}></lightning-button>
+            </div>
+            <!-- <c-custom-form form-fields={formConfig} show-submit-button="true" submit-button-label="Save"
+                onformchange={handleFormChange} onformsubmit={handleFormSubmit}>
+            </c-custom-form> -->
+        </template>
+
+    </div>
+</template>

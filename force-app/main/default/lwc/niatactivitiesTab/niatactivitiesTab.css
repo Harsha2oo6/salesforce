@@ -1,0 +1,32 @@
+.activity-item {
+    border-left: 3px solid var(--lwc-colorBrand, #0176d3);
+    background-color: var(--lwc-colorBackgroundAlt, #ffffff);
+}
+
+.activity-item:hover {
+    background-color: var(--lwc-colorBackgroundRowHover, #f3f3f3);
+}
+
+/* Modal Styles */
+.slds-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 9001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slds-backdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 9000;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+

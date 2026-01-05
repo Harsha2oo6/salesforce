@@ -1,0 +1,22 @@
+.key-field-row {
+    border-left: 3px solid var(--lwc-colorBrand, #0176d3);
+    background-color: var(--lwc-colorBackgroundAlt, #ffffff);
+}
+
+.key-field-row:hover {
+    background-color: var(--lwc-colorBackgroundRowHover, #f3f3f3);
+}
+
+.key-field-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--lwc-spacingSmall, 0.75rem);
+}
+
+.spinnerHolder{
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
