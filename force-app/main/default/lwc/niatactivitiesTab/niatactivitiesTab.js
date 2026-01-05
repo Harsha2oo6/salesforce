@@ -2,47 +2,44 @@ import { LightningElement, wire, track } from 'lwc';
 import getActivities from '@salesforce/apex/ActivitiesController.getActivities';
 
 export default class ActivitiesTab extends LightningElement {
-    // ===== CONFIGURATION: Change this value to set number of records per page =====
-    RECORDS_PER_PAGE = 5;
+    // ===== CONFIGURATION =====
+    PAGE_SIZE = 10; // Records displayed per page (also used as API limit)
     
-    // Tab values are now the category enums directly (lead_activity, agent_task, etc.)
-    // This eliminates conditional logic and makes it easy to add new tabs
     @track tabData = {
         'lead_activity': {
-            allActivities: [],
-            displayedActivities: [],
-            currentPage: 1,
-            totalRecords: 0,
-            hasMore: false,
+            allActivities: [],    // Accumulated activities from all API calls
+            currentPage: 1,       // Current page for client-side pagination
+            totalRecords: 0,      // Total records available on server
+            hasMore: false,       // Whether server has more records
+            nextOffset: 0,        // Next offset for Load More
             filters: {
                 fromDate: null,
                 toDate: null,
                 offset: 0,
-                limit: 100
+                limit: 10
             }
         },
         'agent_task': {
             allActivities: [],
-            displayedActivities: [],
             currentPage: 1,
             totalRecords: 0,
             hasMore: false,
+            nextOffset: 0,
             filters: {
                 fromDate: null,
                 toDate: null,
                 offset: 0,
-                limit: 100 // Load more items from server to enable client-side pagination
+                limit: 10
             }
         }
     };
     
     @track isLoading = true;
     @track error;
-    @track currentTab = 'lead_activity'; // Tab value is now the category enum
-    @track previousTab = 'lead_activity';
-    
+    @track currentTab = 'lead_activity';
     @track showFilterModal = false;
 
+    // Tab configuration
     get tabs() {
         return [
             { label: 'Activities', value: 'lead_activity' },
@@ -54,23 +51,18 @@ export default class ActivitiesTab extends LightningElement {
         return 'lead_activity';
     }
     
-    // Helper getter to get current tab's data
+    // Current tab's data helper
     get currentTabData() {
-        return this.tabData[this.currentTab] || this.tabData['lead_activity'];
+        return this.tabData[this.currentTab];
     }
     
     get filters() {
         return this.currentTabData.filters;
     }
 
-    connectedCallback() {
-        // Limit is already set in tabData initialization
-    }
-
-    // Computed properties for wire service reactivity
-    // Tab value is now the category enum directly, so we can use it as-is
+    // Wire service reactive getters
     get currentActivityCategory() {
-        return this.currentTab; // Tab value is the category enum
+        return this.currentTab;
     }
     
     get currentFromDate() {
@@ -97,65 +89,32 @@ export default class ActivitiesTab extends LightningElement {
         limitRecords: '$currentLimit'
     })
     wiredActivities({ error, data }) {
-        // Always set loading to false when wire completes (with data or error)
         this.isLoading = false;
         
         if (data) {
             try {
-                // Parse JSON string response (Salesforce wire service may auto-parse)
-                let parsedData;
-                if (typeof data === 'string') {
-                    parsedData = JSON.parse(data);
-                } else {
-                    parsedData = data;
-                }
-                // Deep clone to convert Proxy objects to plain objects
+                // Parse response
+                const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
                 const newActivities = JSON.parse(JSON.stringify(parsedData.activities || []));
+                const currentOffset = this.currentTabData.filters.offset;
                 
-                // Get existing data for current tab before updating
-                const existingData = this.currentTabData.allActivities;
-                
-                // Check if this is a tab switch (tab changed) vs filter change
-                const isTabSwitch = this.currentTab !== this.previousTab;
-                
-                // Check if data actually changed (filters changed) by comparing IDs
-                const existingIds = existingData.map(a => a.id).sort();
-                const newIds = newActivities.map(a => a.id).sort();
-                const dataChanged = existingData.length === 0 || 
-                    JSON.stringify(existingIds) !== JSON.stringify(newIds);
-                
-                // If filters changed or first load, replace all activities
-                // Otherwise, accumulate (for Load More functionality)
-                if (dataChanged || existingData.length === 0 || this.currentTabData.filters.offset === 0) {
-                    // Replace all activities (new filter or first load)
+                if (currentOffset === 0) {
+                    // First load or filter change: REPLACE all activities
                     this.currentTabData.allActivities = newActivities;
-                    this.currentTabData.totalRecords = parsedData.total_records || 0;
-                    this.currentTabData.hasMore = parsedData.has_more || false;
-                    this.resetPaginationForCurrentTab();
+                    this.currentTabData.currentPage = 1; // Reset to page 1
                 } else {
-                    // Accumulate activities (Load More clicked)
-                    // Merge new activities, avoiding duplicates
-                    const existingIdsSet = new Set(existingIds);
-                    const uniqueNewActivities = newActivities.filter(a => !existingIdsSet.has(a.id));
-                    this.currentTabData.allActivities = [...existingData, ...uniqueNewActivities];
-                    this.currentTabData.totalRecords = parsedData.total_records || this.currentTabData.totalRecords;
-                    this.currentTabData.hasMore = parsedData.has_more || false;
+                    // Load More: APPEND to existing activities
+                    const existingIds = new Set(this.currentTabData.allActivities.map(a => a.id));
+                    const uniqueNewActivities = newActivities.filter(a => !existingIds.has(a.id));
+                    this.currentTabData.allActivities = [...this.currentTabData.allActivities, ...uniqueNewActivities];
+                    // Increment page to show the newly loaded data in accumulating view
+                    this.currentTabData.currentPage++;
                 }
                 
-                // Only reset pagination if filters changed or first load
-                // Preserve page number when just switching tabs or loading more
-                if (!(isTabSwitch && existingData.length > 0 && !dataChanged)) {
-                    if ((dataChanged || existingData.length === 0) && this.currentTabData.filters.offset === 0) {
-                        this.resetPaginationForCurrentTab();
-                    }
-                }
-                
-                // Update previousTab to currentTab after processing
-                // This ensures next wire execution knows we're not switching tabs anymore
-                this.previousTab = this.currentTab;
-                
-                // Update displayed activities (client-side pagination)
-                this.updateDisplayedActivities();
+                // Update pagination metadata from API response
+                this.currentTabData.totalRecords = parsedData.total_records || 0;
+                this.currentTabData.hasMore = parsedData.has_more || false;
+                this.currentTabData.nextOffset = parsedData.next_offset || (currentOffset + this.PAGE_SIZE);
                 
                 this.error = undefined;
             } catch (parseError) {
@@ -168,43 +127,52 @@ export default class ActivitiesTab extends LightningElement {
         }
     }
 
-    updateDisplayedActivities() {
-        const recordsToShow = this.currentTabData.currentPage * this.RECORDS_PER_PAGE;
-        this.currentTabData.displayedActivities = this.currentTabData.allActivities.slice(0, recordsToShow);
-    }
-
+    // ===== EVENT HANDLERS =====
+    
     handleTabChange(event) {
         const { value } = event.detail;
-        this.previousTab = this.currentTab; // Store previous tab
-        this.currentTab = value; // Tab value is the category enum
-        
-        // Check if the new tab already has data loaded
-        const newTabData = this.tabData[value];
-        if (newTabData && newTabData.allActivities.length > 0) {
-            // Tab already has data, restore the displayed activities immediately
-            this.updateDisplayedActivities();
-        }
-        // Wire will automatically re-execute with new category based on current tab
+        this.currentTab = value;
+        // Wire service will re-execute with new category
+        // Each tab's data is preserved in tabData object
     }
 
     handleFilterChange(event) {
         const filterName = event.currentTarget.dataset.filter;
-        const filterValue = event.target.value || null; // Convert empty string to null
+        const filterValue = event.target.value || null;
         
+        // Update filter value (don't reset offset here, will be reset on Apply)
         this.currentTabData.filters = { 
             ...this.currentTabData.filters, 
-            [filterName]: filterValue, 
-            offset: 0 
+            [filterName]: filterValue
         };
-        this.currentTabData.currentPage = 1;
-        this.currentTabData.displayedActivities = [];
-    }
-    
-    resetPaginationForCurrentTab() {
-        this.currentTabData.currentPage = 1;
-        this.currentTabData.displayedActivities = [];
     }
 
+    handlePrevious() {
+        if (this.currentTabData.currentPage > 1) {
+            this.currentTabData.currentPage--;
+        }
+    }
+
+    handleLoadMore() {
+        const tabData = this.currentTabData;
+        const currentlyDisplayed = tabData.currentPage * this.PAGE_SIZE;
+        
+        if (currentlyDisplayed < tabData.allActivities.length) {
+            // We have more records in already loaded data - show next batch
+            tabData.currentPage++;
+        } else if (tabData.hasMore) {
+            // Need to fetch more from server
+            this.isLoading = true;
+            tabData.filters = {
+                ...tabData.filters,
+                offset: tabData.nextOffset
+            };
+            // Wire service will auto re-execute and append results
+        }
+    }
+
+    // ===== FILTER MODAL HANDLERS =====
+    
     openFilterModal() {
         this.showFilterModal = true;
     }
@@ -214,48 +182,43 @@ export default class ActivitiesTab extends LightningElement {
     }
 
     applyFilters() {
-        this.currentTabData.filters = { ...this.currentTabData.filters, offset: 0 };
-        this.resetPaginationForCurrentTab();
+        // Reset offset to 0 and clear existing data when applying new filters
+        this.currentTabData.filters = { 
+            ...this.currentTabData.filters, 
+            offset: 0 
+        };
+        this.currentTabData.allActivities = [];
+        this.currentTabData.currentPage = 1;
+        this.isLoading = true;
         this.closeFilterModal();
+        // Wire service will re-execute with new filters
     }
 
     clearFilters() {
-        // Reset filters to empty state (no filters applied)
+        // Reset all filters and offset
         this.currentTabData.filters = { 
             ...this.currentTabData.filters, 
             fromDate: null, 
             toDate: null, 
             offset: 0 
         };
-        this.resetPaginationForCurrentTab();
+        this.currentTabData.allActivities = [];
+        this.currentTabData.currentPage = 1;
+        this.isLoading = true;
+        // Wire service will re-execute
     }
 
     handleModalBackdropClick(event) {
-        // Close modal when clicking on backdrop
         if (event.target === event.currentTarget) {
             this.closeFilterModal();
         }
     }
 
-    handlePrevious() {
-        if (this.currentTabData.currentPage > 1) {
-            this.currentTabData.currentPage--;
-            this.updateDisplayedActivities();
-        }
+    handleTitleClick(event) {
+        event.preventDefault();
     }
 
-    handleLoadMore() {
-        // Check if we have more items loaded client-side
-        if (this.currentTabData.displayedActivities.length < this.currentTabData.allActivities.length) {
-            // Show more from already loaded items (client-side pagination)
-            this.currentTabData.currentPage++;
-            this.updateDisplayedActivities();
-        } else if (this.currentTabData.hasMore) {
-            // Load more from server (server-side pagination)
-            this.currentTabData.filters.offset = this.currentTabData.allActivities.length;
-            // Wire will automatically re-execute with new offset
-        }
-    }
+    // ===== COMPUTED PROPERTIES =====
 
     formatDate(dateString) {
         if (!dateString) return '—';
@@ -267,21 +230,28 @@ export default class ActivitiesTab extends LightningElement {
         }
     }
 
+    // Get activities up to current page (accumulating display)
+    // Page 1: records 0-9, Page 2: records 0-19, Page 3: records 0-29
+    get displayedActivities() {
+        const tabData = this.currentTabData;
+        const endIndex = tabData.currentPage * this.PAGE_SIZE;
+        return tabData.allActivities.slice(0, endIndex);
+    }
+
     get showPreviousButton() {
+        // Show Previous when we're displaying more than first page worth of records
         return this.currentTabData.currentPage > 1;
     }
 
     get showLoadMoreButton() {
         const tabData = this.currentTabData;
-        // Show button if:
-        // 1. We have more items loaded client-side, OR
-        // 2. Server has more items (hasMore flag)
-        return (tabData.displayedActivities.length < tabData.allActivities.length) || 
-               (tabData.hasMore === true);
+        const currentlyDisplayed = tabData.currentPage * this.PAGE_SIZE;
+        // Show if we have more local data to display OR server has more data
+        return (currentlyDisplayed < tabData.allActivities.length) || tabData.hasMore;
     }
 
     get loadMoreButtonClass() {
-        return this.showPreviousButton ? "slds-m-left_x-small" : "";
+        return this.showPreviousButton ? 'slds-m-left_x-small' : '';
     }
 
     get errorMessage() {
@@ -289,41 +259,43 @@ export default class ActivitiesTab extends LightningElement {
         return this.error.body?.message || this.error.message || 'Unknown error';
     }
 
-    // Generic getter for current tab's activities (works for any tab)
+    // Activities for current page with formatted dates
     get currentTabActivities() {
-        return this.currentTabData.displayedActivities.map(activity => ({
+        return this.displayedActivities.map(activity => ({
             ...activity,
             formattedDueDate: this.formatDate(activity.due_date),
             formattedCompletedAt: this.formatDate(activity.completed_at)
         }));
     }
     
-    // Keep these for backward compatibility with HTML template
+    // Tab-specific getters for HTML template compatibility
     get activitiesTabActivities() {
-        // If on lead_activity tab, return current tab activities, otherwise return empty
         return this.currentTab === 'lead_activity' ? this.currentTabActivities : [];
     }
 
     get tasksTabActivities() {
-        // If on agent_task tab, return current tab activities, otherwise return empty
         return this.currentTab === 'agent_task' ? this.currentTabActivities : [];
     }
 
+    // Pagination display for current tab (accumulating display)
     get currentTabPaginationDisplay() {
-        const count = this.currentTabActivities.length;
-        const currentPage = this.currentTabData.currentPage;
-        const totalRecords = this.currentTabData.totalRecords || this.currentTabData.allActivities.length;
-        const start = count > 0 ? ((currentPage - 1) * this.RECORDS_PER_PAGE + 1) : 0;
-        const end = count > 0 ? Math.min(currentPage * this.RECORDS_PER_PAGE, totalRecords) : 0;
+        const tabData = this.currentTabData;
+        const displayed = this.displayedActivities.length;
+        const total = tabData.totalRecords || tabData.allActivities.length;
         
+        if (displayed === 0) {
+            return { start: 0, end: 0, total: total };
+        }
+        
+        // Always starts from 1 since we're accumulating
         return {
-            start: start,
-            end: end,
-            total: totalRecords
+            start: 1,
+            end: displayed,
+            total: total
         };
     }
     
-    // Keep these for backward compatibility with HTML template
+    // Tab-specific pagination getters for HTML template compatibility
     get activitiesTabPaginationDisplay() {
         return this.currentTab === 'lead_activity' ? this.currentTabPaginationDisplay : { start: 0, end: 0, total: 0 };
     }
@@ -331,10 +303,4 @@ export default class ActivitiesTab extends LightningElement {
     get tasksTabPaginationDisplay() {
         return this.currentTab === 'agent_task' ? this.currentTabPaginationDisplay : { start: 0, end: 0, total: 0 };
     }
-
-    handleTitleClick(event) {
-        // Prevent default anchor behavior but allow event to bubble to accordion toggle
-        event.preventDefault();
-    }
-
 }
