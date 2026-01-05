@@ -1,1 +1,13 @@
 /* Field Container Component Styles */
+/* Mobile-first override */
+@media (max-width: 768px) {
+    .responsive-field {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .label {
+        margin-right: 0;
+        margin-bottom: 0.25rem;
+    }
+}

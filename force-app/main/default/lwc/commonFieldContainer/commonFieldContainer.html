@@ -1,7 +1,8 @@
 <template>
-    <div class="slds-grid slds-grid_vertical-align-center">
-        <strong class="slds-m-right_small">{formattedLabel}</strong>
-        <div class="slds-text-body_small">
+    <div class="slds-grid slds-grid_vertical-align-center responsive-field">
+        <strong class="slds-m-right_small label">{formattedLabel}</strong>
+
+        <div class="slds-text-body_small value">
             <template if:true={isBoolean}>
                 <lightning-formatted-text value={formattedValue}></lightning-formatted-text>
             </template>
