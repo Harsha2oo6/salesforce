@@ -21,6 +21,7 @@ export default class NiatCallSteps extends LightningElement {
     @track phoneNumbers = [];
     @track isDataLoading = true;
     @track selectedNumber = undefined;
+    @track isUploading = false;
     subscription = null;
     rawProductData = null;
     hasReceivedData = false;
@@ -268,17 +269,36 @@ export default class NiatCallSteps extends LightningElement {
         // console.log('formData:', JSON.stringify(formData));
     }
 
-    handleFormSubmit(event) {
+    async handleFormSubmit(event) {
         // Collect form data from component's tracked properties
         const formData = {
             fullName: this.fullName,
             phoneNumber: this.selectedNumber || ''
         };
         
+        // Set uploading state
+        this.isUploading = true;
+        
+        // Send payload to parent
         this.sendPayloadToParent(formData);
+        
+        // Simulate upload with promise
+        await this.uploadData(formData);
+        
+        // After upload completes, close modal
         this.resetState();
         this.sendCloseModelEventToPopupButton();
         console.log('from callSteps.js: Form submitted:', formData);
+    }
+
+    uploadData(formData) {
+        return new Promise((resolve) => {
+            // eslint-disable-next-line @lwc/lwc/no-async-operation
+            setTimeout(() => {
+                this.isUploading = false;
+                resolve();
+            }, 2000); // 2 second upload simulation
+        });
     }
 
     sendCloseModelEventToPopupButton() {

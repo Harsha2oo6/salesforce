@@ -54,24 +54,31 @@
 
         <!-- STEP 4: FORM -->
         <template if:true={isForm}>
-            <div class="slds-form" role="form">
-                <lightning-input type="text" label="Full Name" name="fullName" data-field="fullName"
-                    placeholder="Enter full name" value={fullName} onchange={handleFullNameChange}></lightning-input>
-                <template if:false={hasSelectedNumber}>
-                    <lightning-combobox label="Select Phone Number" options={phoneNumbers} value={selectedNumber}
-                        onchange={handleNumberSelect}></lightning-combobox>
-                </template>
-                <template if:true={hasSelectedNumber}>
-                    <lightning-input type="phone" label="Phone Number" name="phoneNumber"
-                        placeholder="Enter phone number" value={selectedNumber}
-                        onchange={handlePhoneNumberChange}></lightning-input>
-                </template>
-                <lightning-button label="Submit" variant="brand" onclick={handleFormSubmit}></lightning-button>
-            </div>
+            <!-- UPLOADING STATE -->
+            <template if:true={isUploading}>
+                <c-common-loader loader-text="📤 Uploading.."></c-common-loader>
+            </template>
+
+            <!-- FORM STATE -->
+            <template if:false={isUploading}>
+                <div class="slds-form" role="form">
+                    <lightning-input type="text" label="Full Name" name="fullName" data-field="fullName"
+                        placeholder="Enter full name" value={fullName} onchange={handleFullNameChange}></lightning-input>
+                    <template if:false={hasSelectedNumber}>
+                        <lightning-combobox label="Select Phone Number" options={phoneNumbers} value={selectedNumber}
+                            onchange={handleNumberSelect}></lightning-combobox>
+                    </template>
+                    <template if:true={hasSelectedNumber}>
+                        <lightning-input type="phone" label="Phone Number" name="phoneNumber"
+                            placeholder="Enter phone number" value={selectedNumber}
+                            onchange={handlePhoneNumberChange}></lightning-input>
+                    </template>
+                    <lightning-button label="Submit" variant="brand" onclick={handleFormSubmit}></lightning-button>
+                </div>
+            </template>
             <!-- <c-custom-form form-fields={formConfig} show-submit-button="true" submit-button-label="Save"
                 onformchange={handleFormChange} onformsubmit={handleFormSubmit}>
             </c-custom-form> -->
         </template>
-
     </div>
 </template>
