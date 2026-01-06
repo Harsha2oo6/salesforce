@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <applicationVisibilities>
+        <application>DynamicFormApp</application>
+        <visible>true</visible>
+    </applicationVisibilities>
+    <description>Permission set to access Dynamic Form App</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Dynamic Form App Access</label>
+</PermissionSet>

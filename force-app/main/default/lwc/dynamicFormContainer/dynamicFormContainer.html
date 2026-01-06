@@ -1,0 +1,45 @@
+<template>
+    <lightning-card title={formTitle} icon-name="standard:form">
+        <div class="slds-p-around_medium">
+            <template if:true={isLoading}>
+                <div class="slds-text-align_center slds-p-around_large">
+                    <lightning-spinner alternative-text="Loading form" size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+            <template if:true={hasError}>
+                <div class="slds-text-align_center slds-p-around_large">
+                    <div class="slds-text-color_error">{errorMessage}</div>
+                </div>
+            </template>
+
+            <template if:true={isFormReady}>
+                <c-dynamic-form-renderer
+                    visible-fields={visibleFields}
+                    form-values={values}
+                    errors={errors}
+                    onfieldvaluechange={handleFieldValueChange}
+                    onfieldblur={handleFieldBlur}
+                ></c-dynamic-form-renderer>
+
+                <div class="slds-m-top_large slds-text-align_right">
+                    <lightning-button
+                        variant="brand"
+                        label="Submit"
+                        title="Submit Form"
+                        onclick={handleSubmit}
+                        disabled={isSubmitting}
+                    ></lightning-button>
+                    <lightning-button
+                        variant="neutral"
+                        label="Reset"
+                        title="Reset Form"
+                        onclick={handleReset}
+                        class="slds-m-left_small"
+                    ></lightning-button>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>
+

@@ -1,0 +1,15 @@
+<template>
+    <template if:true={hasOptions}>
+        <lightning-combobox
+            label={label}
+            value={displayValue}
+            placeholder={placeholder}
+            options={formattedOptions}
+            required={isRequired}
+            message-when-value-missing={requiredMessage}
+            onchange={handleChange}
+            class="slds-m-bottom_small"
+        ></lightning-combobox>
+    </template>
+</template>
+

@@ -1,0 +1,27 @@
+<template>
+    <template if:true={hasOptions}>
+        <div class="slds-form-element slds-m-bottom_small">
+            <label class="slds-form-element__label">
+                <abbr class="slds-required" title="required" if:true={isRequired}>*</abbr>
+                {label}
+            </label>
+            <div class="slds-form-element__control">
+                <template for:each={formattedOptions} for:item="option">
+                    <lightning-input
+                        key={option.value}
+                        type="checkbox"
+                        label={option.label}
+                        checked={option.checked}
+                        data-value={option.value}
+                        onchange={handleOptionChange}
+                        class="slds-m-bottom_x-small"
+                    ></lightning-input>
+                </template>
+                <template if:true={hasError}>
+                    <div class="slds-form-element__help slds-text-color_error">{errorMessage}</div>
+                </template>
+            </div>
+        </div>
+    </template>
+</template>
+

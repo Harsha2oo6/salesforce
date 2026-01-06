@@ -1,0 +1,26 @@
+<template>
+    <template if:true={hasFields}>
+        <template for:each={fieldsWithData} for:item="field">
+            <div key={field.field} class="slds-form-element slds-m-bottom_medium">
+                <c-dynamic-form-field
+                    key={field.field}
+                    field-config={field}
+                    field-value={field._fieldValue}
+                    form-values={formValues}
+                    error-message={field._fieldError}
+                    onfieldvaluechange={handleFieldValueChange}
+                    onfieldblur={handleFieldBlur}
+                ></c-dynamic-form-field>
+                <template if:true={field.helperText}>
+                    <div class="slds-form-element__help slds-m-top_x-small">{field.helperText}</div>
+                </template>
+            </div>
+        </template>
+    </template>
+    <template if:false={hasFields}>
+        <div class="slds-text-align_center slds-p-around_large">
+            <p class="slds-text-color_weak">No fields to display</p>
+        </div>
+    </template>
+</template>
+

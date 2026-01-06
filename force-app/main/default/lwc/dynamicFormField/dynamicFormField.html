@@ -1,0 +1,118 @@
+<template>
+    <template if:true={isText}>
+        <template if:true={fieldConfig}>
+            <c-base-form-input-text
+                field={fieldConfig.field}
+                label={fieldConfig.label}
+                placeholder={fieldConfig.placeHolder}
+                is-required={fieldConfig.isRequired}
+                value={fieldValue}
+                onvaluechange={handleValueChange}
+                onfieldblur={handleFieldBlur}
+            ></c-base-form-input-text>
+        </template>
+    </template>
+
+    <template if:true={isPhone}>
+        <template if:true={fieldConfig}>
+            <c-base-form-input-phone
+                field={fieldConfig.field}
+                label={fieldConfig.label}
+                placeholder={fieldConfig.placeHolder}
+                is-required={fieldConfig.isRequired}
+                value={fieldValue}
+                onvaluechange={handleValueChange}
+                onfieldblur={handleFieldBlur}
+            ></c-base-form-input-phone>
+        </template>
+    </template>
+
+    <template if:true={isTextArea}>
+        <template if:true={fieldConfig}>
+            <c-base-form-input-text-area
+                field={fieldConfig.field}
+                label={fieldConfig.label}
+                placeholder={fieldConfig.placeHolder}
+                is-required={fieldConfig.isRequired}
+                value={fieldValue}
+                onvaluechange={handleValueChange}
+                onfieldblur={handleFieldBlur}
+            ></c-base-form-input-text-area>
+        </template>
+    </template>
+
+    <template if:true={isSelect}>
+        <template if:true={fieldConfig}>
+            <c-base-form-input-select
+                field={fieldConfig.field}
+                label={fieldConfig.label}
+                placeholder={fieldConfig.placeHolder}
+                is-required={fieldConfig.isRequired}
+                value={fieldValue}
+                options={filteredOptions}
+                onvaluechange={handleValueChange}
+            ></c-base-form-input-select>
+        </template>
+    </template>
+
+    <template if:true={isMultiSelect}>
+        <template if:true={fieldConfig}>
+            <c-base-form-input-multi-select
+                field={fieldConfig.field}
+                label={fieldConfig.label}
+                placeholder={fieldConfig.placeHolder}
+                is-required={fieldConfig.isRequired}
+                value={fieldValue}
+                options={filteredOptions}
+                error-message={errorMessage}
+                onvaluechange={handleValueChange}
+            ></c-base-form-input-multi-select>
+        </template>
+    </template>
+
+    <template if:true={isRadio}>
+        <template if:true={fieldConfig}>
+            <c-base-form-input-radio
+                field={fieldConfig.field}
+                label={fieldConfig.label}
+                is-required={fieldConfig.isRequired}
+                value={fieldValue}
+                options={filteredOptions}
+                onvaluechange={handleValueChange}
+            ></c-base-form-input-radio>
+        </template>
+    </template>
+
+    <template if:true={isCheckbox}>
+        <template if:true={fieldConfig}>
+            <c-base-form-input-checkbox
+                field={fieldConfig.field}
+                label={fieldConfig.label}
+                is-required={fieldConfig.isRequired}
+                value={fieldValue}
+                options={filteredOptions}
+                error-message={errorMessage}
+                onvaluechange={handleValueChange}
+            ></c-base-form-input-checkbox>
+        </template>
+    </template>
+
+    <template if:true={isDatePicker}>
+        <template if:true={fieldConfig}>
+            <c-base-form-input-date
+                field={fieldConfig.field}
+                label={fieldConfig.label}
+                is-required={fieldConfig.isRequired}
+                value={fieldValue}
+                date-format={fieldConfig.date_format}
+                min-date={fieldConfig.min_date}
+                max-date={fieldConfig.max_date}
+                exclude-dates={fieldConfig.exclude_dates}
+                error-message={errorMessage}
+                onvaluechange={handleValueChange}
+                onfieldblur={handleFieldBlur}
+            ></c-base-form-input-date>
+        </template>
+    </template>
+</template>
+

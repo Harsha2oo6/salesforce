@@ -1,0 +1,18 @@
+<template>
+    <lightning-input
+        type="date"
+        label={label}
+        value={lightningDateValue}
+        min={minDateFormatted}
+        max={maxDateFormatted}
+        required={isRequired}
+        message-when-value-missing={requiredMessage}
+        onchange={handleChange}
+        onblur={handleBlur}
+        class="slds-m-bottom_small"
+    ></lightning-input>
+    <template if:true={hasError}>
+        <div class="slds-form-element__help slds-text-color_error slds-m-top_x-small">{errorMessage}</div>
+    </template>
+</template>
+
