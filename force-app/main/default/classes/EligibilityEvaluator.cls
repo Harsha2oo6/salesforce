@@ -1,7 +1,9 @@
+// Evaluates dynamic rule strings against a nested values map.
 public with sharing class EligibilityEvaluator {
 
     public class EvaluatorException extends Exception {}
 
+    // Public entry: clean rule text then evaluate the expression.
     public static Boolean evaluateEligibility(
         Map<String, Object> values,
         String rule
@@ -21,6 +23,7 @@ public with sharing class EligibilityEvaluator {
         return evaluateExpression(values, rule);
     }
 
+    // Recursively evaluate boolean expressions with !, &&, ||, truthy, and conditions.
     private static Boolean evaluateExpression(
         Map<String, Object> values,
         String expr
@@ -45,6 +48,7 @@ public with sharing class EligibilityEvaluator {
             Integer start = 0;
             for (Integer pos : orPositions) {
                 String part = expr.substring(start, pos).trim();
+                // Short-circuit on the first truthy OR branch.
                 if (evaluateExpression(values, part)) {
                     return true;
                 }
@@ -60,6 +64,7 @@ public with sharing class EligibilityEvaluator {
             Integer start = 0;
             for (Integer pos : andPositions) {
                 String part = expr.substring(start, pos).trim();
+                // Short-circuit on the first falsy AND branch.
                 if (!evaluateExpression(values, part)) {
                     return false;
                 }
@@ -76,6 +81,7 @@ public with sharing class EligibilityEvaluator {
         return evaluateCondition(values, expr);
     }
 
+    // Locate top-level operator positions while ignoring nested groups and strings.
     private static List<Integer> findTopLevelOperatorPositions(String expr, String operator) {
         List<Integer> positions = new List<Integer>();
         Integer depth = 0;
@@ -101,6 +107,7 @@ public with sharing class EligibilityEvaluator {
             else if (ch == ')') depth--;
 
             if (depth == 0 && i + operator.length() <= expr.length()) {
+                // Only capture operators that live at top-level (depth 0).
                 if (expr.substring(i, i + operator.length()) == operator) {
                     positions.add(i);
                     i += operator.length() - 1;
@@ -111,6 +118,7 @@ public with sharing class EligibilityEvaluator {
         return positions;
     }
 
+    // Evaluate a comparison/containment condition (lhs op rhs).
     private static Boolean evaluateCondition(
         Map<String, Object> values,
         String condition
@@ -132,6 +140,7 @@ public with sharing class EligibilityEvaluator {
         return compareValues(leftValue, rightValue, opInfo.operator);
     }
 
+    // Holder for parsed operator metadata.
     private class OperatorInfo {
         public String operator;
         public Integer position;
@@ -142,6 +151,7 @@ public with sharing class EligibilityEvaluator {
         }
     }
 
+    // Scan a condition for the first top-level operator.
     private static OperatorInfo parseOperator(String condition) {
         List<String> operators = new List<String>{
             '!==', '===', '!=', '==', '>=', '<=', '>', '<', ' contains ', ' in '
@@ -166,7 +176,7 @@ public with sharing class EligibilityEvaluator {
             
             if (inString) continue;
 
-            if (ch == '(' || ch == '[') depth++;
+            if (ch == '(' || ch == '[') depth++;           // Track nested parens/brackets.
             else if (ch == ')' || ch == ']') depth--;
 
             if (depth == 0) {
@@ -184,6 +194,7 @@ public with sharing class EligibilityEvaluator {
         return null;
     }
 
+    // Compare two values using supported operators (==, !=, >, contains, in, etc.).
     private static Boolean compareValues(Object left, Object right, String operator) {
         operator = operator.trim();
 
@@ -246,6 +257,7 @@ public with sharing class EligibilityEvaluator {
         throw new EvaluatorException('Unknown operator: "' + operator + '"');
     }
 
+    // Resolve a values[...] path into the provided map, walking nested maps safely.
     private static Object resolveValue(
         Map<String, Object> values,
         String expression
@@ -279,6 +291,7 @@ public with sharing class EligibilityEvaluator {
             }
             
             if (!(current instanceof Map<String, Object>)) {
+                // Bail out when the path dives into a non-map.
                 return null;
             }
             
@@ -291,6 +304,7 @@ public with sharing class EligibilityEvaluator {
         return current;
     }
 
+    // Normalize a values[...] inner expression without stripping brackets.
     private static String cleanExpression(String expr) {
         // Keep brackets intact; only trim whitespace and outer parentheses.
         expr = expr.trim();
@@ -298,6 +312,7 @@ public with sharing class EligibilityEvaluator {
         return expr;
     }
 
+    // Break values[...] path into keys, handling bracketed segments and quotes.
     private static List<String> parseValuePath(String expression) {
         List<String> parts = new List<String>();
         
@@ -334,6 +349,7 @@ public with sharing class EligibilityEvaluator {
         return parts;
     }
 
+    // Find matching ] for a [ while respecting nested brackets and strings.
     private static Integer findMatchingBracket(String str, Integer openPos) {
         Integer depth = 0;
         Boolean inString = false;
@@ -356,7 +372,7 @@ public with sharing class EligibilityEvaluator {
                 if (ch == '[') depth++;
                 else if (ch == ']') {
                     depth--;
-                    if (depth == 0) return i;
+                    if (depth == 0) return i; // Found the matching closing bracket.
                 }
             }
         }
@@ -364,6 +380,7 @@ public with sharing class EligibilityEvaluator {
         return -1;
     }
 
+    // Strip surrounding single/double quotes if present.
     private static String removeQuotes(String str) {
         str = str.trim();
         if (str.length() >= 2) {
@@ -376,6 +393,7 @@ public with sharing class EligibilityEvaluator {
         return str;
     }
 
+    // Parse a literal into Apex types: null, booleans, numbers, strings, arrays.
     private static Object parseLiteral(String raw) {
         raw = raw.trim();
         
@@ -407,6 +425,7 @@ public with sharing class EligibilityEvaluator {
         return raw;
     }
 
+    // Parse a [a, b, c] literal into a List<Object>.
     private static List<Object> parseArrayLiteral(String arrayStr) {
         List<Object> result = new List<Object>();
         
@@ -426,6 +445,7 @@ public with sharing class EligibilityEvaluator {
         return result;
     }
 
+    // Split by commas while respecting quoted segments.
     private static List<String> splitByComma(String str) {
         List<String> parts = new List<String>();
         Boolean inString = false;
@@ -458,6 +478,7 @@ public with sharing class EligibilityEvaluator {
         return parts;
     }
 
+    // Determine if expression is a standalone truthy check (no operator).
     private static Boolean isTruthyCheck(String expr) {
         expr = expr.trim();
         
@@ -465,6 +486,7 @@ public with sharing class EligibilityEvaluator {
         return opInfo == null;
     }
 
+    // Evaluate truthiness for literals or values[...] references (with optional !).
     private static Boolean evaluateTruthy(Map<String, Object> values, String expr) {
         expr = expr.trim();
         
@@ -485,6 +507,7 @@ public with sharing class EligibilityEvaluator {
         return isTruthy(value);
     }
 
+    // Truthiness rules across supported types.
     private static Boolean isTruthy(Object value) {
         if (value == null) return false;
         if (value instanceof Boolean) return (Boolean) value;
@@ -495,6 +518,7 @@ public with sharing class EligibilityEvaluator {
         return true;
     }
 
+    // Remove redundant outer parentheses while preserving inner structure.
     private static String stripOuterParentheses(String input) {
         input = input.trim();
         
@@ -522,6 +546,7 @@ public with sharing class EligibilityEvaluator {
                     else if (ch == ')') depth--;
                     
                     if (depth == 0 && i < input.length() - 1) {
+                        // Outer pair isn't the sole wrapper; stop stripping.
                         firstMatchesLast = false;
                         break;
                     }
@@ -541,12 +566,14 @@ public with sharing class EligibilityEvaluator {
         return input;
     }
 
+    // Check if a literal represents null.
     private static Boolean isNullLiteral(String value) {
         if (value == null) return true;
         String lower = value.toLowerCase().trim();
         return lower == 'null' || lower == '\'null\'' || lower == '"null"';
     }
 
+    // Convert supported types/strings to Decimal when possible.
     private static Decimal toDecimal(Object value) {
         if (value == null) return null;
         
@@ -559,6 +586,7 @@ public with sharing class EligibilityEvaluator {
         
         try {
             if (str.startsWith('-')) {
+                // Handle leading negative sign separately from numeric validation.
                 str = str.substring(1);
                 if (isValidNumberString(str)) {
                     return -Decimal.valueOf(str);
@@ -572,6 +600,7 @@ public with sharing class EligibilityEvaluator {
         return null;
     }
 
+    // Validate a numeric string (optional leading -, single dot).
     private static Boolean isValidNumberString(String str) {
         if (String.isBlank(str)) return false;
         
@@ -588,6 +617,7 @@ public with sharing class EligibilityEvaluator {
         return true;
     }
 
+    // Collapse consecutive spaces to single spaces.
     private static String normalizeWhitespace(String input) {
         if (String.isBlank(input)) return input;
         
