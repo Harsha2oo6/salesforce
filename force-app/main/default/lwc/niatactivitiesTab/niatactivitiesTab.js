@@ -76,13 +76,20 @@ export default class ActivitiesTab extends LightningElement {
     }
     
     get currentDateFilter() {
-        // Return date_filter object with from_date and to_date
-        const fromDate = this.currentTabData.filters.fromDate || '';
-        const toDate = this.currentTabData.filters.toDate || '';
-        return {
-            from_date: fromDate,
-            to_date: toDate
-        };
+        // Build date_filter object matching API spec
+        const fromDate = this.currentTabData.filters.fromDate || null;
+        const toDate = this.currentTabData.filters.toDate || null;
+        
+        // Only include date_filter if at least one date is provided
+        if (fromDate || toDate) {
+            const dateFilter = {
+                from_date: fromDate || '',
+                to_date: toDate || ''
+            };
+            // Return as JSON string since wire service doesn't support complex objects
+            return JSON.stringify(dateFilter);
+        }
+        return null;
     }
     
     get currentOffset() {
@@ -96,7 +103,7 @@ export default class ActivitiesTab extends LightningElement {
     @wire(getActivities, {
         opportunityId: '$currentOpportunityId',
         activityFilter: '$currentActivityFilter',
-        dateFilter: '$currentDateFilter',
+        dateFilterJson: '$currentDateFilter',
         offset: '$currentOffset',
         limitRecords: '$currentLimit'
     })

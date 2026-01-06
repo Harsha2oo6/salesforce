@@ -4,17 +4,11 @@ public with sharing class ActivitiesController {
     private static final String LEAD_ACTIVITY_ENUM = 'LEAD_ACTIVITY';
     private static final String TASK_ENUM = 'TASK';
     
-    // Wrapper class for date filter
-    public class DateFilter {
-        @AuraEnabled public String from_date;
-        @AuraEnabled public String to_date;
-    }
-    
     @AuraEnabled(cacheable=true)
     public static String getActivities(
         String opportunityId,
         List<String> activityFilter,
-        DateFilter dateFilter,
+        String dateFilterJson,
         Integer offset,
         Integer limitRecords
     ) {
@@ -22,6 +16,22 @@ public with sharing class ActivitiesController {
         // When real API is ready, replace this with HTTP callout using the parameters
         // For now, return mock data filtered by activity filter and date range
         // Note: opportunityId is accepted but not used in mock implementation
+        
+        // Parse dateFilter from JSON string (LWC passes as JSON string due to wire service limitations)
+        Map<String, Object> dateFilter = new Map<String, Object>();
+        String fromDate = null;
+        String toDate = null;
+        
+        if (String.isNotBlank(dateFilterJson)) {
+            try {
+                dateFilter = (Map<String, Object>)JSON.deserializeUntyped(dateFilterJson);
+                fromDate = (String)dateFilter.get('from_date');
+                toDate = (String)dateFilter.get('to_date');
+            } catch (Exception e) {
+                // If parsing fails, continue without date filter
+                System.debug('Error parsing dateFilter: ' + e.getMessage());
+            }
+        }
         
         // Build all mock activities
         List<Map<String, Object>> allActivities = buildAllActivities();
@@ -52,55 +62,66 @@ public with sharing class ActivitiesController {
             filteredActivities = allActivities;
         }
         
-        // Filter by date range (using activity_datetime equivalent) - OPTIONAL
-        String fromDate = (dateFilter != null && String.isNotBlank(dateFilter.from_date)) ? dateFilter.from_date : null;
-        String toDate = (dateFilter != null && String.isNotBlank(dateFilter.to_date)) ? dateFilter.to_date : null;
+        // Transform activities first to get activity_datetime, then filter by date range
+        List<Map<String, Object>> transformedActivities = new List<Map<String, Object>>();
+        for (Map<String, Object> activity : filteredActivities) {
+            transformedActivities.add(transformActivityToNewFormat(activity));
+        }
         
+        // Filter by date range using activity_datetime - OPTIONAL
         if (String.isNotBlank(fromDate) || String.isNotBlank(toDate)) {
             List<Map<String, Object>> dateFilteredActivities = new List<Map<String, Object>>();
-            for (Map<String, Object> activity : filteredActivities) {
-                // Use created_at for lead activities, completed_at or due_date for tasks
-                String dateTimeStr = (String)activity.get('created_at');
-                if (String.isBlank(dateTimeStr)) {
-                    dateTimeStr = (String)activity.get('completed_at');
-                }
-                if (String.isBlank(dateTimeStr)) {
-                    dateTimeStr = (String)activity.get('due_date');
-                }
-                
-                if (String.isNotBlank(dateTimeStr)) {
-                    // Parse date from datetime string (format: YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ)
-                    Date activityDate;
-                    if (dateTimeStr.contains('T')) {
-                        activityDate = Date.valueOf(dateTimeStr.split('T')[0]);
-                    } else {
-                        activityDate = Date.valueOf(dateTimeStr);
+            for (Map<String, Object> activity : transformedActivities) {
+                String activityDateTimeStr = (String)activity.get('activity_datetime');
+                if (String.isNotBlank(activityDateTimeStr)) {
+                    // Parse datetime string (format: "2025-01-02T10:15:00Z" or "2025-01-05")
+                    DateTime activityDateTime = null;
+                    try {
+                        // Try parsing as ISO datetime first
+                        if (activityDateTimeStr.contains('T')) {
+                            activityDateTime = DateTime.valueOf(activityDateTimeStr.replace('T', ' ').replace('Z', ''));
+                        } else {
+                            // Parse as date only
+                            Date activityDate = Date.valueOf(activityDateTimeStr);
+                            activityDateTime = DateTime.newInstance(activityDate, Time.newInstance(0, 0, 0, 0));
+                        }
+                    } catch (Exception e) {
+                        // If parsing fails, include the activity
+                        dateFilteredActivities.add(activity);
+                        continue;
                     }
-                    
-                    Date fromDateValue = String.isNotBlank(fromDate) ? Date.valueOf(fromDate) : null;
-                    Date toDateValue = String.isNotBlank(toDate) ? Date.valueOf(toDate) : null;
                     
                     Boolean includeActivity = true;
-                    if (fromDateValue != null && activityDate < fromDateValue) {
-                        includeActivity = false;
+                    
+                    if (String.isNotBlank(fromDate)) {
+                        Date fromDateValue = Date.valueOf(fromDate);
+                        DateTime fromDateTime = DateTime.newInstance(fromDateValue, Time.newInstance(0, 0, 0, 0));
+                        if (activityDateTime < fromDateTime) {
+                            includeActivity = false;
+                        }
                     }
-                    if (toDateValue != null && activityDate > toDateValue) {
-                        includeActivity = false;
+                    
+                    if (String.isNotBlank(toDate)) {
+                        Date toDateValue = Date.valueOf(toDate);
+                        DateTime toDateTime = DateTime.newInstance(toDateValue, Time.newInstance(23, 59, 59, 999));
+                        if (activityDateTime > toDateTime) {
+                            includeActivity = false;
+                        }
                     }
                     
                     if (includeActivity) {
                         dateFilteredActivities.add(activity);
                     }
                 } else {
-                    // Include activities without dates
+                    // Include activities without activity_datetime
                     dateFilteredActivities.add(activity);
                 }
             }
-            filteredActivities = dateFilteredActivities;
+            transformedActivities = dateFilteredActivities;
         }
         
         // Calculate total records BEFORE pagination
-        Integer totalRecords = filteredActivities.size();
+        Integer totalRecords = transformedActivities.size();
         
         // Apply pagination (offset and limit)
         Integer currentOffset = offset != null ? offset : 0;
@@ -109,22 +130,16 @@ public with sharing class ActivitiesController {
         // Slice the filtered activities array based on offset and limit
         List<Map<String, Object>> paginatedActivities = new List<Map<String, Object>>();
         Integer startIndex = currentOffset;
-        Integer endIndex = Math.min(currentOffset + currentLimit, filteredActivities.size());
+        Integer endIndex = Math.min(currentOffset + currentLimit, transformedActivities.size());
         
         for (Integer i = startIndex; i < endIndex; i++) {
-            paginatedActivities.add(filteredActivities[i]);
-        }
-        
-        // Transform activities to new response format
-        List<Map<String, Object>> transformedActivities = new List<Map<String, Object>>();
-        for (Map<String, Object> activity : paginatedActivities) {
-            transformedActivities.add(transformActivityToNewFormat(activity));
+            paginatedActivities.add(transformedActivities[i]);
         }
         
         // Build response matching new API spec
         Map<String, Object> response = new Map<String, Object>();
         response.put('total', totalRecords);
-        response.put('activities', transformedActivities);
+        response.put('activities', paginatedActivities);
         
         return JSON.serialize(response);
     }
