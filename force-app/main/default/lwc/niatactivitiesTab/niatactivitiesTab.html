@@ -2,7 +2,7 @@
     <c-tabs-container tabs={tabs} active-tab-value={activeTabValue} variant="standard" ontabchange={handleTabChange}>
 
         <!-- Activities Tab Content -->
-        <div slot="lead_activity">
+        <div slot="LEAD_ACTIVITY">
             <div class="slds-m-top_medium">
 
                 <!-- Activities List -->
@@ -49,24 +49,28 @@
                                                         <a href="#" 
                                                             class="slds-text-heading_small slds-text-link" 
                                                             onclick={handleTitleClick}>
-                                                            {activity.title}
+                                                            {activity.activity_name}
                                                         </a>
-                                                        <template if:true={activity.related_to}>
+                                                        <template if:true={activity.task_user_name}>
                                                             <p class="slds-text-body_small slds-m-top_xx-small">
-                                                                Related to:
-                                                                <a href="#" class="slds-text-link">{activity.related_to.name} ({activity.related_to.id})</a>
+                                                                Assigned to: {activity.task_user_name}
                                                             </p>
                                                         </template>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <!-- Expanded Content: Simple heading and related to -->
+                                            <!-- Expanded Content: Fields using commonFieldContainer -->
                                             <div class="accordion-content-activity slds-p-around_small">
                                                 <div class="slds-grid slds-grid_vertical">
-                                                    <div class="slds-grid slds-grid_align-spread">
-                                                        <h3 class="slds-text-heading_small">{activity.title}</h3>
-                                                    </div>
+                                                    <template if:true={activity.fields}>
+                                                        <template for:each={activity.fields} for:item="field">
+                                                            <div key={field.order} class="slds-box slds-box_x-small activity-field-item">
+                                                            <c-common-field-container item={field}>
+                                                            </c-common-field-container>
+                                                            </div>
+                                                        </template>
+                                                    </template>
                                                 </div>
                                             </div>
                                         </c-common-accordion>
@@ -106,7 +110,7 @@
         </div>
 
         <!-- Tasks Tab Content -->
-        <div slot="agent_task">
+        <div slot="TASK">
             <div class="slds-m-top_medium">
 
                 <!-- Loading State -->
@@ -155,29 +159,27 @@
                                                         <a href="#" 
                                                             class="slds-text-heading_small slds-text-link" 
                                                             onclick={handleTitleClick}>
-                                                            {activity.title}
+                                                            {activity.activity_name}
                                                         </a>
-                                                        <template if:true={activity.related_to}>
+                                                        <template if:true={activity.task_user_name}>
                                                             <p class="slds-text-body_small slds-m-top_xx-small">
-                                                                Related to:
-                                                                <a href="#" class="slds-text-link">{activity.related_to.name} ({activity.related_to.id})</a>
+                                                                Assigned to: {activity.task_user_name}
                                                             </p>
                                                         </template>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <!-- Expanded Content: Simple heading and related to -->
+                                            <!-- Expanded Content: Fields using commonFieldContainer -->
                                             <div class="accordion-content-activity slds-p-around_small">
                                                 <div class="slds-grid slds-grid_vertical">
-                                                    <div class="slds-grid slds-grid_align-spread">
-                                                        <h3 class="slds-text-heading_small">{activity.title}</h3>
-                                                    </div>
-                                                    <template if:true={activity.related_to}>
-                                                        <p class="slds-text-body_small slds-m-top_xx-small">
-                                                            Related to:
-                                                            <a href="#" class="slds-text-link">{activity.related_to.name} ({activity.related_to.id})</a>
-                                                        </p>
+                                                    <template if:true={activity.fields}>
+                                                        <template for:each={activity.fields} for:item="field">
+                                                            <div key={field.order} class="slds-box slds-box_x-small activity-field-item">
+                                                            <c-common-field-container item={field}>
+                                                            </c-common-field-container>
+                                                            </div>
+                                                        </template>
                                                     </template>
                                                 </div>
                                             </div>

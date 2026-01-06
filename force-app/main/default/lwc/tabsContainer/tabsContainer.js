@@ -29,11 +29,11 @@ export default class TabsContainer extends LightningElement {
     }
 
     get hasActivitiesTab() {
-        return this.tabs.some(tab => tab && tab.value === 'lead_activity');
+        return this.tabs.some(tab => tab && tab.value === 'LEAD_ACTIVITY');
     }
 
     get hasTasksTab() {
-        return this.tabs.some(tab => tab && tab.value === 'agent_task');
+        return this.tabs.some(tab => tab && tab.value === 'TASK');
     }
 
     get hasEventsTab() {

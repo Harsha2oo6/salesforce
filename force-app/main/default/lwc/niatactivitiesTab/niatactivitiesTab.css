@@ -95,3 +95,16 @@
     }
 
 }
+.activity-field-item {
+    width: 100%;
+    box-sizing: border-box;
+    border-left: 2px solid var(--lwc-colorBorder, #dddbda);
+    background-color: var(--lwc-colorBackground, #f3f3f3);
+    min-width: 0;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+}
+
+.activity-field-item:hover {
+    background-color: #f1f0f0;
+}

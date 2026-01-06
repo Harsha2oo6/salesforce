@@ -5,8 +5,12 @@ export default class ActivitiesTab extends LightningElement {
     // ===== CONFIGURATION =====
     PAGE_SIZE = 10; // Records displayed per page (also used as API limit)
     
+    // Activity filter enum values
+    static LEAD_ACTIVITY_ENUM = 'LEAD_ACTIVITY';
+    static TASK_ENUM = 'TASK';
+    
     @track tabData = {
-        'lead_activity': {
+        'LEAD_ACTIVITY': {
             allActivities: [],    // Accumulated activities from all API calls
             currentPage: 1,       // Current page for client-side pagination
             totalRecords: 0,      // Total records available on server
@@ -19,7 +23,7 @@ export default class ActivitiesTab extends LightningElement {
                 limit: 10
             }
         },
-        'agent_task': {
+        'TASK': {
             allActivities: [],
             currentPage: 1,
             totalRecords: 0,
@@ -36,19 +40,20 @@ export default class ActivitiesTab extends LightningElement {
     
     @track isLoading = true;
     @track error;
-    @track currentTab = 'lead_activity';
+    @track currentTab = 'LEAD_ACTIVITY';
     @track showFilterModal = false;
+    @track opportunityId = null; // Can be set from parent component or URL params
 
     // Tab configuration
     get tabs() {
         return [
-            { label: 'Activities', value: 'lead_activity' },
-            { label: 'Tasks', value: 'agent_task' },
+            { label: 'Activities', value: 'LEAD_ACTIVITY' },
+            { label: 'Tasks', value: 'TASK' },
         ];
     }
 
     get activeTabValue() {
-        return 'lead_activity';
+        return 'LEAD_ACTIVITY';
     }
     
     // Current tab's data helper
@@ -61,16 +66,23 @@ export default class ActivitiesTab extends LightningElement {
     }
 
     // Wire service reactive getters
-    get currentActivityCategory() {
-        return this.currentTab;
+    get currentOpportunityId() {
+        return this.opportunityId;
     }
     
-    get currentFromDate() {
-        return this.currentTabData.filters.fromDate || null;
+    get currentActivityFilter() {
+        // Return array with current tab's enum value
+        return [this.currentTab];
     }
     
-    get currentToDate() {
-        return this.currentTabData.filters.toDate || null;
+    get currentDateFilter() {
+        // Return date_filter object with from_date and to_date
+        const fromDate = this.currentTabData.filters.fromDate || '';
+        const toDate = this.currentTabData.filters.toDate || '';
+        return {
+            from_date: fromDate,
+            to_date: toDate
+        };
     }
     
     get currentOffset() {
@@ -82,9 +94,9 @@ export default class ActivitiesTab extends LightningElement {
     }
 
     @wire(getActivities, {
-        activityCategory: '$currentActivityCategory',
-        fromDate: '$currentFromDate',
-        toDate: '$currentToDate',
+        opportunityId: '$currentOpportunityId',
+        activityFilter: '$currentActivityFilter',
+        dateFilter: '$currentDateFilter',
         offset: '$currentOffset',
         limitRecords: '$currentLimit'
     })
@@ -111,10 +123,12 @@ export default class ActivitiesTab extends LightningElement {
                     this.currentTabData.currentPage++;
                 }
                 
-                // Update pagination metadata from API response
-                this.currentTabData.totalRecords = parsedData.total_records || 0;
-                this.currentTabData.hasMore = parsedData.has_more || false;
-                this.currentTabData.nextOffset = parsedData.next_offset || (currentOffset + this.PAGE_SIZE);
+                // Update pagination metadata from API response (new format uses 'total' instead of 'total_records')
+                this.currentTabData.totalRecords = parsedData.total || 0;
+                // Calculate hasMore based on total and current loaded count
+                const totalLoaded = this.currentTabData.allActivities.length;
+                this.currentTabData.hasMore = totalLoaded < this.currentTabData.totalRecords;
+                this.currentTabData.nextOffset = currentOffset + this.PAGE_SIZE;
                 
                 this.error = undefined;
             } catch (parseError) {
@@ -262,18 +276,17 @@ export default class ActivitiesTab extends LightningElement {
     get currentTabActivities() {
         return this.displayedActivities.map(activity => ({
             ...activity,
-            formattedDueDate: this.formatDate(activity.due_date),
-            formattedCompletedAt: this.formatDate(activity.completed_at)
+            formattedActivityDateTime: this.formatDate(activity.activity_datetime)
         }));
     }
     
     // Tab-specific getters for HTML template compatibility
     get activitiesTabActivities() {
-        return this.currentTab === 'lead_activity' ? this.currentTabActivities : [];
+        return this.currentTab === 'LEAD_ACTIVITY' ? this.currentTabActivities : [];
     }
 
     get tasksTabActivities() {
-        return this.currentTab === 'agent_task' ? this.currentTabActivities : [];
+        return this.currentTab === 'TASK' ? this.currentTabActivities : [];
     }
 
     // Pagination display for current tab (accumulating display)
@@ -296,10 +309,10 @@ export default class ActivitiesTab extends LightningElement {
     
     // Tab-specific pagination getters for HTML template compatibility
     get activitiesTabPaginationDisplay() {
-        return this.currentTab === 'lead_activity' ? this.currentTabPaginationDisplay : { start: 0, end: 0, total: 0 };
+        return this.currentTab === 'LEAD_ACTIVITY' ? this.currentTabPaginationDisplay : { start: 0, end: 0, total: 0 };
     }
 
     get tasksTabPaginationDisplay() {
-        return this.currentTab === 'agent_task' ? this.currentTabPaginationDisplay : { start: 0, end: 0, total: 0 };
+        return this.currentTab === 'TASK' ? this.currentTabPaginationDisplay : { start: 0, end: 0, total: 0 };
     }
 }

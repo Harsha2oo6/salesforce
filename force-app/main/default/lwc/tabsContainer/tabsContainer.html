@@ -31,15 +31,15 @@
             
             <!-- Activities Tab -->
             <template if:true={hasActivitiesTab}>
-                <lightning-tab style="margin-right: 10px;" label="Activities" value="lead_activity" onactive={handleTabActive}>
-                    <slot name="lead_activity"></slot>
+                <lightning-tab style="margin-right: 10px;" label="Activities" value="LEAD_ACTIVITY" onactive={handleTabActive}>
+                    <slot name="LEAD_ACTIVITY"></slot>
                 </lightning-tab>
             </template>
             
             <!-- Tasks Tab -->
             <template if:true={hasTasksTab}>
-                <lightning-tab style="margin-right: 10px;" label="Tasks" value="agent_task" onactive={handleTabActive}>
-                    <slot name="agent_task"></slot>
+                <lightning-tab style="margin-right: 10px;" label="Tasks" value="TASK" onactive={handleTabActive}>
+                    <slot name="TASK"></slot>
                 </lightning-tab>
             </template>
             
