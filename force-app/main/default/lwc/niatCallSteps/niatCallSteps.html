@@ -61,7 +61,8 @@
 
             <!-- FORM STATE -->
             <template if:false={isUploading}>
-                <div class="slds-form" role="form">
+                <c-dynamic-form-container ></c-dynamic-form-container>
+                <!-- <div class="slds-form" role="form">
                     <lightning-input type="text" label="Full Name" name="fullName" data-field="fullName"
                         placeholder="Enter full name" value={fullName} onchange={handleFullNameChange}></lightning-input>
                     <template if:false={hasSelectedNumber}>
@@ -74,7 +75,7 @@
                             onchange={handlePhoneNumberChange}></lightning-input>
                     </template>
                     <lightning-button label="Submit" variant="brand" onclick={handleFormSubmit}></lightning-button>
-                </div>
+                </div> -->
             </template>
             <!-- <c-custom-form form-fields={formConfig} show-submit-button="true" submit-button-label="Save"
                 onformchange={handleFormChange} onformsubmit={handleFormSubmit}>

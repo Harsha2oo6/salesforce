@@ -8,6 +8,7 @@ import {
 } from 'c/serviceFormState';
 import submitForm from '@salesforce/apex/DynamicFormController.submitForm';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { validateField } from 'c/utilityValidators';
 
 export default class DynamicFormContainer extends LightningElement {
   @api formName = 'default';
@@ -143,7 +144,7 @@ export default class DynamicFormContainer extends LightningElement {
       // Safely extract field and value
       const field = event.detail.field;
       const value = event.detail.value;
-      
+
       // Validate that field exists and is a string
       if (!field || typeof field !== 'string') {
         console.warn('Field name is missing or invalid in blur event:', field);
@@ -165,8 +166,7 @@ export default class DynamicFormContainer extends LightningElement {
     const fieldConfig = this.config.fields.find((f) => f.field === fieldName);
     if (!fieldConfig) return;
 
-    const { validateField: validateFieldUtil } = require('c/utilityValidators');
-    const fieldErrors = validateFieldUtil(
+    const fieldErrors = validateField(
       value,
       fieldConfig.isRequired,
       fieldConfig.validation_regexs || []
@@ -179,52 +179,128 @@ export default class DynamicFormContainer extends LightningElement {
   }
 
   validateAllFields() {
-    const { validateField: validateFieldUtil } = require('c/utilityValidators');
+    console.log('validateAllFields: Starting validation');
+    console.log('validateAllFields: visibleFields count:', this.visibleFields?.length || 0);
+    
     const newErrors = {};
     let hasErrors = false;
 
-    this.visibleFields.forEach((field) => {
-      const fieldErrors = validateFieldUtil(
-        this.values[field.field],
-        field.isRequired,
-        field.validation_regexs || []
-      );
+    if (!this.visibleFields || !Array.isArray(this.visibleFields)) {
+      console.warn('validateAllFields: visibleFields is not an array:', this.visibleFields);
+      return true; // No fields to validate, consider it valid
+    }
 
-      if (fieldErrors.length > 0) {
-        newErrors[field.field] = fieldErrors;
+    if (this.visibleFields.length === 0) {
+      console.log('validateAllFields: No visible fields to validate');
+      return true;
+    }
+
+    console.log('validateAllFields: Iterating over', this.visibleFields.length, 'fields');
+    
+    this.visibleFields.forEach((field, index) => {
+      try {
+        const fieldName = field.field;
+        const fieldValue = this.values[fieldName];
+        const isRequired = field.isRequired || false;
+        const validationRules = field.validation_regexs || [];
+        
+        console.log(`validateAllFields: [${index + 1}/${this.visibleFields.length}] Validating "${fieldName}"`);
+        console.log(`  - Value:`, fieldValue);
+        console.log(`  - Required:`, isRequired);
+        console.log(`  - Validation rules:`, validationRules);
+        
+        const fieldErrors = validateField(
+          fieldValue,
+          isRequired,
+          validationRules
+        );
+
+        console.log(`  - Errors:`, fieldErrors);
+
+        if (fieldErrors && Array.isArray(fieldErrors) && fieldErrors.length > 0) {
+          newErrors[fieldName] = fieldErrors;
+          hasErrors = true;
+          console.log(`  - ❌ Field "${fieldName}" FAILED validation`);
+        } else {
+          console.log(`  - ✅ Field "${fieldName}" passed validation`);
+        }
+      } catch (fieldError) {
+        console.error(`validateAllFields: Error validating field ${field?.field}:`, fieldError);
+        console.error('Error details:', fieldError.message, fieldError.stack);
+        // Mark field as having errors if validation throws
+        newErrors[field?.field] = ['Validation error occurred'];
         hasErrors = true;
       }
     });
 
+    console.log('validateAllFields: Validation complete');
+    console.log('validateAllFields: Total errors found:', Object.keys(newErrors).length);
+    console.log('validateAllFields: Errors object:', JSON.stringify(newErrors, null, 2));
+    console.log('validateAllFields: hasErrors:', hasErrors);
+    
     this.errors = newErrors;
-    return !hasErrors;
+    const result = !hasErrors;
+    console.log('validateAllFields: Returning validation result:', result);
+    return result;
   }
 
   async handleSubmit() {
+    console.log('handleSubmit: Starting form submission');
+    
     // Validate all fields
-    if (!this.validateAllFields()) {
+    console.log('handleSubmit: Validating all fields...');
+    const validationResult = this.validateAllFields();
+    console.log('handleSubmit: Validation result:', validationResult);
+    
+    if (!validationResult) {
+      console.log('handleSubmit: Validation failed. Errors:', JSON.stringify(this.errors));
       this.showToast('Error', 'Please fix the errors before submitting', 'error');
       return;
     }
 
+    console.log('handleSubmit: Validation passed. Proceeding with submission...');
+
     try {
       this.isSubmitting = true;
-
+      console.log('handleSubmit: isSubmitting set to true');
+      
       // Prepare form data
       const formData = {
         formName: this.formName,
         values: this.values,
         timestamp: new Date().toISOString()
       };
-
+      console.log('handleSubmit: Form data prepared:', JSON.stringify(formData, null, 2));
+      
+      console.log('handleSubmit: Calling Apex submitForm...');
       const result = await submitForm({ formValuesJson: JSON.stringify(formData) });
-
+      console.log('handleSubmit: Apex call completed. Result type:', typeof result);
+      console.log('handleSubmit: Raw result:', result);
+      
       this.isSubmitting = false;
+      console.log('handleSubmit: isSubmitting set to false');
 
-      // Parse result
-      const resultObj = JSON.parse(result);
+      // Parse result with error handling
+      let resultObj;
+      try {
+        if (!result || typeof result !== 'string') {
+          throw new Error('Invalid response from server: ' + typeof result);
+        }
+        resultObj = JSON.parse(result);
+        console.log('handleSubmit: Parsed result object:', JSON.stringify(resultObj, null, 2));
+      } catch (parseError) {
+        console.error('handleSubmit: Error parsing result:', parseError);
+        console.error('handleSubmit: Raw result that failed to parse:', result);
+        this.showToast(
+          'Error',
+          'Invalid response from server. Please try again.',
+          'error'
+        );
+        return;
+      }
 
       if (resultObj.success) {
+        console.log('handleSubmit: Submission successful');
         this.showToast('Success', resultObj.message || 'Form submitted successfully', 'success');
         // Optionally reset form or emit event
         this.dispatchEvent(
@@ -235,17 +311,28 @@ export default class DynamicFormContainer extends LightningElement {
             }
           })
         );
+        console.log('handleSubmit: formsubmit event dispatched');
       } else {
+        console.log('handleSubmit: Submission failed (success: false)');
         this.showToast('Error', resultObj.message || 'Failed to submit form', 'error');
       }
     } catch (error) {
       this.isSubmitting = false;
-      console.error('Error submitting form:', error);
-      this.showToast(
-        'Error',
-        error.body?.message || error.message || 'Failed to submit form',
-        'error'
-      );
+      console.error('handleSubmit: Exception caught:', error);
+      console.error('handleSubmit: Error details:', {
+        message: error.message,
+        body: error.body,
+        stack: error.stack
+      });
+      
+      const errorMessage = 
+        error.body?.message || 
+        error.body?.pageErrors?.[0]?.message ||
+        error.message || 
+        'Failed to submit form';
+      
+      console.error('handleSubmit: Showing error toast with message:', errorMessage);
+      this.showToast('Error', errorMessage, 'error');
     }
   }
 

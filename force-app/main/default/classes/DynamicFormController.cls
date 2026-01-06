@@ -80,14 +80,14 @@ public with sharing class DynamicFormController {
       response.put('success', true);
       response.put('message', 'Form submitted successfully');
       response.put('timestamp', Datetime.now().format());
-
+      System.debug('response: ' + JSON.serialize(response));
       return JSON.serialize(response);
     } catch (Exception e) {
       // Return error response
       Map<String, Object> response = new Map<String, Object>();
       response.put('success', false);
       response.put('message', 'Error submitting form: ' + e.getMessage());
-
+      System.debug('response: ' + JSON.serialize(response));
       return JSON.serialize(response);
     }
   }
