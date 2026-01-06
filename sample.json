@@ -261,3 +261,79 @@ form_fields=[
         "placeholder": ""
     }
 ]
+
+{
+    "reference_fields_update_config": [
+      {
+        "field_id": "activity_datetime",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "Latest_Qualified_Date_Time__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "values[ACTIVITY['SESSION_ATTENDED_DURATION_MIN']] > 30 && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'NAT Initiated' && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'Exam Fee Paid' && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'Exam Slot Booked' && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'Exam Not Attended' && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'Exam Attended Not Qualified'"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "First_Qualified_Date_Time__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "values[ACTIVITY['SESSION_ATTENDED_DURATION_MIN']] > 30 && values[PRODUCT_OPPORTUNITY['First_Qualified_Date_Time__c']] === null && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'NAT Initiated' && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'Exam Fee Paid' && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'Exam Slot Booked' && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'Exam Not Attended' && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'Exam Attended Not Qualified'"
+          }
+        ]
+      },
+      {
+        "field_id": "Cycle",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "Latest_Qualified_Cycle",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "values[ACTIVITY['SESSION_ATTENDED_DURATION_MIN']] > 30 && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'NAT Initiated' && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'Exam Fee Paid' && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'Exam Slot Booked' && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'Exam Not Attended' && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'Exam Attended Not Qualified'"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "First_Qualified_Cycle__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "values[ACTIVITY['SESSION_ATTENDED_DURATION_MIN']] > 30 && values[PRODUCT_OPPORTUNITY['First_Qualified_Cycle__c']] === null && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'NAT Initiated' && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'Exam Fee Paid' && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'Exam Slot Booked' && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'Exam Not Attended' && values[PRODUCT_OPPORTUNITY['Stage__c']] !== 'Exam Attended Not Qualified'"
+          }
+        ]
+      }
+    ],
+  
+    "conditional_field_updates": [
+      {
+        "record_type": "PRODUCT_OPPORTUNITY",
+        "record_field_id": "Lead_Approached_Count__c",
+        "update_conditions": [
+          {
+            "condition": "values[ACTIVITY['activity_datetime']] !== values[PRODUCT_OPPORTUNITY['Session_Attended_on']]",
+            "value_type": "INCREMENT_BY_ONE",
+            "check_order": 1
+          }
+        ]
+      },
+      {
+        "record_type": "PRODUCT_OPPORTUNITY",
+        "record_field_id": "Nurturing_Channel",
+        "update_conditions": [
+          {
+            "condition": "values[PRODUCT_OPPORTUNITY['Nurturing_Channel']] === null",
+            "value_type": "FIXED_VALUE",
+            "value": "Live Session",
+            "check_order": 1
+          }
+        ]
+      }
+    ],
+  
+    "opportunity_stage_update_conditions": [
+      {
+        "condition": "(values[PRODUCT_OPPORTUNITY['Presales_Lead_Type__c']] === 'Non-NAT Lead' || values[PRODUCT_OPPORTUNITY['Presales_Lead_Type__c']] === null) && values[ACTIVITY['SESSION_ATTENDED_DURATION_MIN']] > 30",
+        "update_stage": "Qualified",
+        "check_order": 1
+      }
+    ],
+  
+    "new_opportunity_stage": "Webinar Attended - Not Qualified"
+  }
+   

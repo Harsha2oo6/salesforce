@@ -1,0 +1,227 @@
+public with sharing class EligibilityEvaluator {
+
+    public static Boolean evaluateEligibility(
+        Map<String, Object> values,
+        String rule
+    ) {
+        if (String.isBlank(rule) || values == null) {
+            return false;
+        }
+
+        // Remove outer parentheses and whitespace
+        rule = rule.replace('\n', '').replace('\r', '').trim();
+        rule = stripOuterParentheses(rule);
+
+        return evaluateExpression(values, rule);
+    }
+
+    // -------------------- EXPRESSION PARSER --------------------
+    // Supports nested parentheses with && and || operators.
+    private static Boolean evaluateExpression(
+        Map<String, Object> values,
+        String expr
+    ) {
+        if (String.isBlank(expr)) return false;
+
+        expr = stripOuterParentheses(expr.trim());
+
+        // 1) Split by top-level OR (||)
+        List<Integer> orPositions = new List<Integer>();
+        Integer depth = 0;
+        for (Integer i = 0; i < expr.length() - 1; i++) {
+            String ch = expr.substring(i, i + 1);
+            if (ch == '(') depth++;
+            else if (ch == ')') depth--;
+
+            if (depth == 0 && expr.substring(i, i + 2) == '||') {
+                orPositions.add(i);
+                i++; // skip next char of ||
+            }
+        }
+
+        if (!orPositions.isEmpty()) {
+            Boolean orResult = false;
+            Integer start = 0;
+            for (Integer pos : orPositions) {
+                String part = expr.substring(start, pos);
+                if (evaluateExpression(values, part)) {
+                    return true; // short-circuit OR
+                }
+                start = pos + 2;
+            }
+            // Last segment
+            String lastPart = expr.substring(start);
+            return evaluateExpression(values, lastPart);
+        }
+
+        // 2) Split by top-level AND (&&)
+        List<Integer> andPositions = new List<Integer>();
+        depth = 0;
+        for (Integer i = 0; i < expr.length() - 1; i++) {
+            String ch = expr.substring(i, i + 1);
+            if (ch == '(') depth++;
+            else if (ch == ')') depth--;
+
+            if (depth == 0 && expr.substring(i, i + 2) == '&&') {
+                andPositions.add(i);
+                i++; // skip next char of &&
+            }
+        }
+
+        if (!andPositions.isEmpty()) {
+            Integer start = 0;
+            for (Integer pos : andPositions) {
+                String part = expr.substring(start, pos);
+                if (!evaluateExpression(values, part)) {
+                    return false; // short-circuit AND
+                }
+                start = pos + 2;
+            }
+            // Last segment
+            String lastPart = expr.substring(start);
+            return evaluateExpression(values, lastPart);
+        }
+
+        // 3) No logical operators at top level → treat as single condition
+        return evaluateCondition(values, expr.trim());
+    }
+
+    // -------------------- SINGLE CONDITION --------------------
+    // Parses JS-style conditions (===, !==, null) and evaluates using Apex logic
+    private static Boolean evaluateCondition(
+        Map<String, Object> values,
+        String condition
+    ) {
+        condition = stripOuterParentheses(condition);
+
+        // Extract operator - check longer operators first (===, !==) before shorter ones (==, !=)
+        String operator;
+        if (condition.contains('!==')) operator = '!==';
+        else if (condition.contains('===')) operator = '===';
+        else if (condition.contains('!=')) operator = '!=';
+        else if (condition.contains('==')) operator = '==';
+        else if (condition.contains('>=')) operator = '>=';
+        else if (condition.contains('<=')) operator = '<=';
+        else if (condition.contains('>')) operator = '>';
+        else if (condition.contains('<')) operator = '<';
+        else return false;
+
+        List<String> parts = condition.split(Pattern.quote(operator));
+        if (parts.size() != 2) return false;
+
+        Object leftValue = resolveValue(values, parts[0].trim());
+        String rightRaw = parts[1].trim().replace('\'', '');
+
+        // Check if right side is null literal (JS uses lowercase 'null')
+        Boolean rightIsNullLiteral = (rightRaw == 'null' || rightRaw == 'NULL');
+
+        // Handle equality operators (=== or ==)
+        if (operator == '===' || operator == '==') {
+            if (rightIsNullLiteral) {
+                return leftValue == NULL;
+            }
+            if (leftValue == NULL) {
+                return false;
+            }
+            return String.valueOf(leftValue) == rightRaw;
+        }
+
+        // Handle inequality operators (!== or !=)
+        if (operator == '!==' || operator == '!=') {
+            if (rightIsNullLiteral) {
+                return leftValue != NULL;
+            }
+            if (leftValue == NULL) {
+                return true; // NULL !== 'someValue' is true
+            }
+            return String.valueOf(leftValue) != rightRaw;
+        }
+
+        // Numeric comparisons - if leftValue is NULL, return false
+        if (leftValue == NULL) {
+            return false;
+        }
+
+        Integer leftNum = Integer.valueOf(String.valueOf(leftValue));
+        Integer rightNum = Integer.valueOf(rightRaw);
+
+        if (operator == '>=') return leftNum >= rightNum;
+        if (operator == '<=') return leftNum <= rightNum;
+        if (operator == '>') return leftNum > rightNum;
+        if (operator == '<') return leftNum < rightNum;
+
+        return false;
+    }
+
+    // -------------------- VALUE RESOLVER --------------------
+    private static Object resolveValue(
+        Map<String, Object> values,
+        String expression
+    ) {
+        // Example: values[ACTIVITY['highest_qualification']]
+        expression = expression
+            .replace('values[', '')
+            .replace(']', '')
+            .replace('\'', '')
+            .trim();
+
+        // Safely remove any leading/trailing parentheses that may wrap the expression,
+        // e.g. "(PRODUCT_OPPORTUNITY[Presales_Lead_Type__c]" → "PRODUCT_OPPORTUNITY[Presales_Lead_Type__c"
+        while (expression.startsWith('(')) {
+            expression = expression.substring(1).trim();
+        }
+        while (expression.endsWith(')')) {
+            expression = expression.substring(0, expression.length() - 1).trim();
+        }
+
+        // ACTIVITY.highest_qualification
+        List<String> path = expression.split('\\[');
+        if (path.size() != 2) return null;
+
+        String section = path[0];
+        String field = path[1];
+
+        if (!values.containsKey(section)) return null;
+
+        Map<String, Object> sectionMap =
+            (Map<String, Object>) values.get(section);
+
+        return sectionMap.get(field);
+    }
+
+    // -------------------- UTIL --------------------
+    // Only strips outer parentheses if they are actually a matching pair
+    private static String stripOuterParentheses(String input) {
+        input = input.trim();
+        
+        // Keep stripping while outer parens are a matching pair
+        while (input.length() >= 2 && input.startsWith('(') && input.endsWith(')')) {
+            // Check if the first '(' matches the last ')'
+            Integer depth = 0;
+            Boolean firstMatchesLast = false;
+            
+            for (Integer i = 0; i < input.length(); i++) {
+                String ch = input.substring(i, i + 1);
+                if (ch == '(') depth++;
+                else if (ch == ')') depth--;
+                
+                // If depth becomes 0 before the end, the first '(' doesn't match the last ')'
+                if (depth == 0 && i < input.length() - 1) {
+                    firstMatchesLast = false;
+                    break;
+                }
+                if (depth == 0 && i == input.length() - 1) {
+                    firstMatchesLast = true;
+                }
+            }
+            
+            if (firstMatchesLast) {
+                input = input.substring(1, input.length() - 1).trim();
+            } else {
+                break;
+            }
+        }
+        
+        return input;
+    }
+}

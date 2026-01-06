@@ -1,7 +1,0 @@
-  <div class="slds-flex slds-wrap accordion-items-container">
-                        <template for:each={items} for:item="item">
-                            <div key={item.name} class="slds-box slds-box_x-small accordion-item">
-                                <c-common-field-container item={item}></c-common-field-container>
-                            </div>
-                        </template>
-                    </div>

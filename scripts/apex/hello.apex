@@ -1,67 +1,48 @@
-// List<Student__c> students = [SELECT Id, Name,Course__c,Age__c FROM Student__c];
-// System.debug('Students: ' + students);
-// for (Student__c student : students) {
-//     System.debug('Student: ' + student.Name);
-//     System.debug('Course: ' + student.Course__c);
-//     System.debug('Age: ' + student.Age__c);
-//     System.debug('--------------------------------');
-// }
+Map<String, Object> values = EligibilityController.getValuesPayload();
+List<Map<String, String>> rulesList = new List<Map<String, String>>();
 
-// Student__c student = new Student__c();
-// student.Name = 'John Doe';
-// student.Course__c = 'Math';
-// student.Age__c = 20;
-// insert student;
-// System.debug('Student: ' + student.Name);
-// System.debug('Course: ' + student.Course__c);
-// System.debug('Age: ' + student.Age__c);
-// System.debug('--------------------------------');
+String q = '\'';
 
-// Student__c student = [SELECT Id, Name,Course__c,Age__c FROM Student__c WHERE Name = 'John Doe' LIMIT 1];
-// student.Course__c = 'Science';
-// update student;
-// System.debug('Student: ' + student.Name);
-// System.debug('Course: ' + student.Course__c);
-// System.debug('Age: ' + student.Age__c);
-// System.debug('--------------------------------');
+// Rule 1: NON_NAT_LEAD_SESSION_DURATION (Line 331)
+// Presales Lead Type is Non-NAT/null AND Session Duration > 30
+String NON_NAT_LEAD_SESSION_DURATION = '(values[PRODUCT_OPPORTUNITY[' + q + 'Presales_Lead_Type__c' + q + ']] === ' + q + 'Non-NAT Lead' + q + ' || values[PRODUCT_OPPORTUNITY[' + q + 'Presales_Lead_Type__c' + q + ']] === null) && values[ACTIVITY[' + q + 'SESSION_ATTENDED_DURATION_MIN' + q + ']] > 30';
+rulesList.add(new Map<String, String>{'name' => 'NON_NAT_LEAD_SESSION_DURATION', 'rule' => NON_NAT_LEAD_SESSION_DURATION});
 
-// Student__c studentToDelete = [SELECT Id, Name FROM Student__c WHERE Name = 'John Doe' LIMIT 1];
-// delete studentToDelete;
-// System.debug('Student deleted: ' + studentToDelete.Id + ' Student Name: ' + studentToDelete.Name);
-// System.debug('--------------------------------');
-// String branchName = 'CSE-ML';
-// Student__c student = new Student__c();
-// student.Name = 'test';
-// student.Course__c = 'Salesforce';
-// student.Age__c = 20;
-// student.Branch__c = BranchServices.getBranchId(branchName);
-// StudentController.createStudent(student);
-// StudentController.updateStudentCourse('John Doe', 'Science');
-// StudentController.deleteStudent('John Doe');
+// Rule 2: NURTURING_CHANNEL_NULL (Line 320)
+// Nurturing Channel is null
+String NURTURING_CHANNEL_NULL = 'values[PRODUCT_OPPORTUNITY[' + q + 'Nurturing_Channel' + q + ']] === null';
+rulesList.add(new Map<String, String>{'name' => 'NURTURING_CHANNEL_NULL', 'rule' => NURTURING_CHANNEL_NULL});
 
+// Rule 3: ACTIVITY_SESSION_DATE_MISMATCH (Line 309)
+// Activity datetime differs from Session Attended on
+String ACTIVITY_SESSION_DATE_MISMATCH = 'values[ACTIVITY[' + q + 'activity_datetime' + q + ']] !== values[PRODUCT_OPPORTUNITY[' + q + 'Session_Attended_on' + q + ']]';
+rulesList.add(new Map<String, String>{'name' => 'ACTIVITY_SESSION_DATE_MISMATCH', 'rule' => ACTIVITY_SESSION_DATE_MISMATCH});
 
+// Rule 4: FIRST_CYCLE_NULL_WITH_STAGE_CHECK (Line 297)
+// Session > 30, First Qualified Cycle null, stage not in exam stages
+String FIRST_CYCLE_NULL_WITH_STAGE_CHECK = 'values[ACTIVITY[' + q + 'SESSION_ATTENDED_DURATION_MIN' + q + ']] > 30 && values[PRODUCT_OPPORTUNITY[' + q + 'First_Qualified_Cycle__c' + q + ']] === null && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'NAT Initiated' + q + ' && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'Exam Fee Paid' + q + ' && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'Exam Slot Booked' + q + ' && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'Exam Not Attended' + q + ' && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'Exam Attended Not Qualified' + q;
+rulesList.add(new Map<String, String>{'name' => 'FIRST_CYCLE_NULL_WITH_STAGE_CHECK', 'rule' => FIRST_CYCLE_NULL_WITH_STAGE_CHECK});
 
-// string branch = 'CSE-DS';
-// Id branchId = BranchServices.getBranchId(branch);
-// List<Student__c> students = BranchServices.getStudentUnderBranch(branchId);
-// System.debug('Branch ID: ' + branchId +' Branch Name: ' + branch + ' Students: ' + students.size());
-// for (Student__c student : students) {
-//     System.debug('Student ID: ' + student.Reg_No__c + ' Student Name: ' + student.Name);
-//     System.debug('Student Course: ' + student.Course__c);
-//     System.debug('Student Age: ' + student.Age__c);
-//     System.debug('Student BranchId: ' + student.Branch__c);
-//     System.debug('--------------------------------');
-// }   
+// Rule 5: SESSION_DURATION_STAGE_CONDITION_A (Line 291)
+// Session > 30, stage not in exam stages
+String SESSION_DURATION_STAGE_CONDITION_A = 'values[ACTIVITY[' + q + 'SESSION_ATTENDED_DURATION_MIN' + q + ']] > 30 && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'NAT Initiated' + q + ' && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'Exam Fee Paid' + q + ' && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'Exam Slot Booked' + q + ' && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'Exam Not Attended' + q + ' && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'Exam Attended Not Qualified' + q;
+rulesList.add(new Map<String, String>{'name' => 'SESSION_DURATION_STAGE_CONDITION_A', 'rule' => SESSION_DURATION_STAGE_CONDITION_A});
 
-Map<string, List<Student__c>> studentsMap = BranchServices.getAllStudentsAndBranches();
-System.debug('Students Map: ' + studentsMap.get('CSE-DS'));
-// for (string branchName : studentsMap.keySet()) {
-//     System.debug('Branch Name: ' + branchName);
-//     for (Student__c student : studentsMap.get(branchName)) {
-//         System.debug('Student ID: ' + student.Reg_No__c + ' Student Name: ' + student.Name);
-//         System.debug('Student Course: ' + student.Course__c);
-//         System.debug('Student Age: ' + student.Age__c);
-//         System.debug('Student BranchId: ' + student.Branch__c);
-//         System.debug('--------------------------------');
-//     }
-// }
+// Rule 6: FIRST_QUALIFIED_DATE_WITH_STAGE_CHECK (Line 280)
+// Session > 30, First Qualified DateTime null, stage not in exam stages
+String FIRST_QUALIFIED_DATE_WITH_STAGE_CHECK = 'values[ACTIVITY[' + q + 'SESSION_ATTENDED_DURATION_MIN' + q + ']] > 30 && values[PRODUCT_OPPORTUNITY[' + q + 'First_Qualified_Date_Time__c' + q + ']] === null && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'NAT Initiated' + q + ' && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'Exam Fee Paid' + q + ' && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'Exam Slot Booked' + q + ' && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'Exam Not Attended' + q + ' && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'Exam Attended Not Qualified' + q;
+rulesList.add(new Map<String, String>{'name' => 'FIRST_QUALIFIED_DATE_WITH_STAGE_CHECK', 'rule' => FIRST_QUALIFIED_DATE_WITH_STAGE_CHECK});
+
+// Rule 7: SESSION_DURATION_STAGE_CONDITION_B (Line 274)
+// Session > 30, stage not in exam stages
+String SESSION_DURATION_STAGE_CONDITION_B = 'values[ACTIVITY[' + q + 'SESSION_ATTENDED_DURATION_MIN' + q + ']] > 30 && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'NAT Initiated' + q + ' && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'Exam Fee Paid' + q + ' && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'Exam Slot Booked' + q + ' && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'Exam Not Attended' + q + ' && values[PRODUCT_OPPORTUNITY[' + q + 'Stage__c' + q + ']] !== ' + q + 'Exam Attended Not Qualified' + q;
+rulesList.add(new Map<String, String>{'name' => 'SESSION_DURATION_STAGE_CONDITION_B', 'rule' => SESSION_DURATION_STAGE_CONDITION_B});
+
+// Evaluate all rules
+for (Map<String, String> ruleMap : rulesList) {
+    String ruleName = ruleMap.get('name');
+    String ruleExpression = ruleMap.get('rule');
+    Boolean eligible = EligibilityEvaluator.evaluateEligibility(values, ruleExpression);
+
+    System.debug('-->' + ruleName + '-->' + eligible);
+}
