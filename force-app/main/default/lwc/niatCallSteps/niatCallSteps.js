@@ -263,10 +263,6 @@ export default class NiatCallSteps extends LightningElement {
 
     handleFormChange(event) {
         const { field, value, formData } = event.detail;
-        // console.log('event:', event);
-        // console.log('field:', field);
-        // console.log('value:', value);
-        // console.log('formData:', JSON.stringify(formData));
     }
 
     async handleFormSubmit(event) {
@@ -288,7 +284,6 @@ export default class NiatCallSteps extends LightningElement {
         // After upload completes, close modal
         this.resetState();
         this.sendCloseModelEventToPopupButton();
-        console.log('from callSteps.js: Form submitted:', formData);
     }
 
     uploadData(formData) {
