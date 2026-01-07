@@ -21,7 +21,7 @@
                     <!-- Sections (Accordions) -->
                     <template if:true={hasSections}>
                         <template for:each={sections} for:item="section">
-                            <c-common-accordion key={section.section_name} title={section.section_name}
+                            <c-common-accordion key={section.Section_name} title={section.Section_name}
                                 is-collapsed-by-default="false">
                                 <div class="slds-flex slds-wrap accordion-items-container">
                                     <template if:true={section.hasFields}>
