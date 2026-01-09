@@ -61,28 +61,12 @@ export default class BaseFormInputDate extends LightningElement {
   }
 
   handleBlur(event) {
-    // Validate date constraints on blur
-    const dateValue = event.target.value;
-    if (dateValue) {
-      const constraintError = validateDateConstraints(
-        dateValue,
-        this._minDate,
-        this._maxDate,
-        this.excludeDates,
-        this.dateFormat
-      );
-      
-      if (constraintError) {
-        this.errorMessage = constraintError;
-      } else {
-        this.errorMessage = '';
-      }
-    }
-
-    // Dispatch blur event for validation
+    // Dispatch blur event for centralized validation in container
+    const dateValue = event.target.value || '';
     this.dispatchEvent(
       new CustomEvent('fieldblur', {
         detail: {
+          field: this.field,
           value: dateValue
         }
       })

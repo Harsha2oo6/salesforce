@@ -1,15 +1,16 @@
 /**
  * Service module for fetching form configuration from Apex
+ * Pure service layer - no UI concerns (no toasts, no UI state)
  */
 
 import getFormConfig from '@salesforce/apex/DynamicFormController.getFormConfig';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 /**
  * Fetches form configuration from Apex
  * @param {Object} component - The LWC component instance (for imperative Apex call)
  * @param {string} formName - Name/identifier of the form to fetch
  * @returns {Promise<Object>} - Promise that resolves to form configuration object
+ * @throws {Error} - Throws structured error on failure (UI layer handles display)
  */
 export async function fetchFormConfig(component, formName) {
   try {
@@ -30,16 +31,11 @@ export async function fetchFormConfig(component, formName) {
   } catch (error) {
     console.error('Error fetching form config:', error);
     
-    // Show error toast
-    const evt = new ShowToastEvent({
-      title: 'Error',
-      message: 'Failed to load form configuration: ' + (error.body?.message || error.message || 'Unknown error'),
-      variant: 'error',
-      mode: 'sticky'
-    });
-    component.dispatchEvent(evt);
-
-    throw error;
+    // Re-throw with structured error information (no UI concerns here)
+    const errorMessage = error.body?.message || error.message || 'Unknown error';
+    const structuredError = new Error(`Failed to load form configuration: ${errorMessage}`);
+    structuredError.originalError = error;
+    throw structuredError;
   }
 }
 

@@ -10,7 +10,13 @@ public with sharing class EligibilityController {
         Map<String, Object> activity = new Map<String, Object>{
             'highest_qualification'        => 'Graduation (Ongoing)',
             'SESSION_ATTENDED_DURATION_MIN'=> 45,
-            'activity_datetime'            => '2026-01-01T10:00:00Z'
+            'activity_datetime'            => '2026-01-01T10:00:00Z',
+
+            // Sample Date fields for testing standard literals like TODAY / TOMORROW
+            'activity_date'                => Date.today(),
+            'future_activity_date'         => Date.today().addDays(1),
+            'activity_date_next_month'     => Date.today().addMonths(1),
+            'activity_date_next_year'      => Date.today().addYears(1)
         };
 
         // PRODUCT_OPPORTUNITY values
@@ -44,6 +50,9 @@ public with sharing class EligibilityController {
 
             // For opportunity_stage_update_conditions
             'Presales_Lead_Type__c'           => 'Non-NAT Lead',
+
+            // Sample Date field for testing THISYEAR / THISMONTH
+            'Application_Date__c'             => DateTime.now(),
 
             // Example count value (not constrained by conditions themselves)
             'Lead_Approached_Count__c'        => 1

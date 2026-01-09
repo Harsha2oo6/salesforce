@@ -1,0 +1,13 @@
+.slds-icon-selected-empty {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+}
+
+.slds-listbox__option {
+    cursor: pointer;
+}
+
+.slds-combobox__input[readonly] {
+    cursor: pointer;
+}

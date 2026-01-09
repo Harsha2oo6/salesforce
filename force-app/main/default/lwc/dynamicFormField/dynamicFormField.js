@@ -48,27 +48,16 @@ export default class DynamicFormField extends LightningElement {
   }
 
   handleValueChange(event) {
-    // Add null checks to prevent errors
+    // Forward the event with the same detail (no re-deriving field)
     if (!event || !event.detail) {
       console.warn('Invalid value change event in dynamicFormField');
       return;
     }
 
-    const detail = event.detail;
-    const field = detail.field || (this.fieldConfig && this.fieldConfig.field) || '';
-    const value = detail.value !== undefined ? detail.value : '';
-
-    if (!field) {
-      console.warn('Field name is missing in value change event');
-      return;
-    }
-
+    // Forward the event as-is, assuming it already has { field, value }
     this.dispatchEvent(
       new CustomEvent('fieldvaluechange', {
-        detail: {
-          field: field,
-          value: value
-        },
+        detail: event.detail,
         bubbles: true,
         composed: true
       })
@@ -76,50 +65,20 @@ export default class DynamicFormField extends LightningElement {
   }
 
   handleFieldBlur(event) {
-    try {
-      // Add null checks to prevent errors
-      if (!this.fieldConfig || !this.fieldConfig.field) {
-        console.warn('Field config is not available for blur event');
-        return;
-      }
-
-      // Safely get the value from event detail or use current field value
-      let value = '';
-      if (event && event.detail && event.detail.value !== undefined) {
-        value = event.detail.value;
-      } else if (this.fieldValue !== undefined && this.fieldValue !== null) {
-        value = this.fieldValue;
-      }
-
-      // Ensure field name is a string
-      const fieldName = String(this.fieldConfig.field || '');
-
-      if (!fieldName) {
-        console.warn('Field name is empty, cannot dispatch blur event');
-        return;
-      }
-
-      // Create event detail object with only primitive values
-      const eventDetail = {
-        field: fieldName,
-        value: String(value || '')
-      };
-
-      // Dispatch event with error handling
-      this.dispatchEvent(
-        new CustomEvent('fieldblur', {
-          detail: eventDetail,
-          bubbles: true,
-          composed: true
-        })
-      );
-    } catch (error) {
-      // Catch any errors and log them instead of throwing
-      console.error('Error in handleFieldBlur:', error);
-      console.error('Event:', event);
-      console.error('FieldConfig:', this.fieldConfig);
-      console.error('FieldValue:', this.fieldValue);
+    // Forward the event with the same detail (no re-deriving field)
+    if (!event || !event.detail) {
+      console.warn('Invalid blur event in dynamicFormField');
+      return;
     }
+
+    // Forward the event as-is, assuming it already has { field, value }
+    this.dispatchEvent(
+      new CustomEvent('fieldblur', {
+        detail: event.detail,
+        bubbles: true,
+        composed: true
+      })
+    );
   }
 }
 

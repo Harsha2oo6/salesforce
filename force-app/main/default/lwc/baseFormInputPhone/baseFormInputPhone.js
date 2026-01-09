@@ -28,6 +28,7 @@ export default class BaseFormInputPhone extends LightningElement {
     this.dispatchEvent(
       new CustomEvent('fieldblur', {
         detail: {
+          field: this.field,
           value: value
         }
       })

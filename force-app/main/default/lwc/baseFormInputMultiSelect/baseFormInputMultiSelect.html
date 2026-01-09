@@ -1,27 +1,56 @@
 <template>
     <template if:true={hasOptions}>
         <div class="slds-form-element slds-m-bottom_small">
-            <label class="slds-form-element__label">
+            <label class="slds-form-element__label" for="multiselect-combobox">
                 <abbr class="slds-required" title="required" if:true={isRequired}>*</abbr>
                 {label}
             </label>
             <div class="slds-form-element__control">
-                <template for:each={formattedOptions} for:item="option">
-                    <lightning-input
-                        key={option.value}
-                        type="checkbox"
-                        label={option.label}
-                        checked={option.checked}
-                        data-value={option.value}
-                        onchange={handleOptionChange}
-                        class="slds-m-bottom_x-small"
-                    ></lightning-input>
-                </template>
+                <div class={comboboxClass} role="combobox" aria-expanded={isOpen} aria-haspopup="listbox">
+                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                        <input type="text" class={inputClass} id="multiselect-combobox" readonly value={displayText}
+                            placeholder={placeholder} required={isRequired} aria-controls="multiselect-listbox"
+                            aria-expanded={isOpen} aria-autocomplete="list" onclick={handleComboboxClick}
+                            onkeydown={handleInputKeyDown} onblur={handleBlur} aria-describedby={ariaDescribedBy} />
+                        <span
+                            class="slds-icon_container slds-icon-utility-down slds-input__icon slds-input__icon_right">
+                            <lightning-icon icon-name="utility:down" alternative-text="Open dropdown"
+                                size="x-small"></lightning-icon>
+                        </span>
+                    </div>
+                    <div id="multiselect-listbox" class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid"
+                        role="listbox" if:true={isOpen}>
+                        <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                            <template for:each={formattedOptions} for:item="option" for:index="index">
+                                <li key={option.value} role="presentation" class="slds-listbox__item">
+                                    <div id={option.value} role="option"
+                                        class="slds-media slds-listbox__option slds-listbox__option_entity"
+                                        data-value={option.value} data-value-index={index} tabindex={option.tabindex}
+                                        aria-selected={option.checked} onclick={handleOptionClick}
+                                        onkeydown={handleOptionKeyDown}>
+                                        <span class="slds-media__figure slds-listbox__option-icon">
+                                            <lightning-icon if:true={option.checked} icon-name="utility:check"
+                                                alternative-text="Selected" size="xx-small"></lightning-icon>
+                                            <span if:false={option.checked} class="slds-icon-selected-empty"></span>
+                                        </span>
+                                        <span class="slds-media__body">
+                                            <span class="slds-listbox__option-text slds-listbox__option-text_entity">
+                                                {option.label}
+                                            </span>
+                                        </span>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
                 <template if:true={hasError}>
-                    <div class="slds-form-element__help slds-text-color_error">{errorMessage}</div>
+                    <div id="multiselect-error"
+                        class="slds-form-element__help slds-text-color_error slds-m-top_x-small">
+                        {errorMessage}
+                    </div>
                 </template>
             </div>
         </div>
     </template>
 </template>
-

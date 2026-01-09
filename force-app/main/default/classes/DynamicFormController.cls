@@ -182,10 +182,10 @@ public with sharing class DynamicFormController {
     multiSelectField.put('placeHolder', 'Select modules');
     multiSelectField.put('isRequired', false);
     multiSelectField.put('defaultValue', new List<String>());
-    multiSelectField.put(
-      'relevantCondition',
-      'values[\'user_type\'] === \'admin\''
-    );
+    // multiSelectField.put(
+    //   'relevantCondition',
+    //   'values[\'user_type\'] === \'admin\''
+    // );
     List<String> multiSelectRelevantFields = new List<String>{ 'user_type' };
     multiSelectField.put('relevantFields', multiSelectRelevantFields);
     multiSelectField.put('validation_regexs', new List<Map<String, Object>>());

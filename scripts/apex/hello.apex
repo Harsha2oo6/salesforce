@@ -36,15 +36,27 @@ rulesList.add(new Map<String, String>{'name' => 'FIRST_QUALIFIED_DATE_WITH_STAGE
 String SESSION_DURATION_STAGE_CONDITION_B = 'values[ACTIVITY["SESSION_ATTENDED_DURATION_MIN"]] > 30 && values[PRODUCT_OPPORTUNITY["Stage__c"]] !== "NAT Initiated" && values[PRODUCT_OPPORTUNITY["Stage__c"]] !== "Exam Fee Paid" && values[PRODUCT_OPPORTUNITY["Stage__c"]] !== "Exam Slot Booked" && values[PRODUCT_OPPORTUNITY["Stage__c"]] !== "Exam Not Attended" && values[PRODUCT_OPPORTUNITY["Stage__c"]] !== "Exam Attended Not Qualified"';
 rulesList.add(new Map<String, String>{'name' => 'SESSION_DURATION_STAGE_CONDITION_B', 'rule' => SESSION_DURATION_STAGE_CONDITION_B});
 
+// Rule 8: ACTIVITY_DATE_IS_TODAY
+// activity_date equals TODAY (uses standard literal resolution)
+String ACTIVITY_DATE_IS_TODAY = 'values[ACTIVITY["activity_date"]] === DATE_TODAY';
+rulesList.add(new Map<String, String>{'name' => 'ACTIVITY_DATE_IS_TODAY', 'rule' => ACTIVITY_DATE_IS_TODAY});
+
+// Rule 9: FUTURE_ACTIVITY_AFTER_TODAY
+// future_activity_date greater than TODAY
+String FUTURE_ACTIVITY_AFTER_TODAY = 'values[ACTIVITY["future_activity_date"]] > DATE_TODAY';
+rulesList.add(new Map<String, String>{'name' => 'FUTURE_ACTIVITY_AFTER_TODAY', 'rule' => FUTURE_ACTIVITY_AFTER_TODAY});
+
+// Rule 10: APPLICATION_IN_THIS_YEAR
+// Application_Date__c greater than or equal to THISYEAR
+String APPLICATION_IN_THIS_YEAR = 'values[PRODUCT_OPPORTUNITY["Application_Date__c"]] === DATE_THIS_YEAR';
+rulesList.add(new Map<String, String>{'name' => 'APPLICATION_IN_THIS_YEAR', 'rule' => APPLICATION_IN_THIS_YEAR});
+
 String sample= '(values[PRODUCT_OPPORTUNITY["Presales_Lead_Type__c"]] === "Non-NAT Lead" || values[PRODUCT_OPPORTUNITY["Presales_Lead_Type__c"]] === null) && values[ACTIVITY["SESSION_ATTENDED_DURATION_MIN"]] > 30';
 // Evaluate all rules
 for (Map<String, String> ruleMap : rulesList) {
     String ruleName = ruleMap.get('name');
     String ruleExpression = ruleMap.get('rule');
-    Boolean eligible = EligibilityEvaluator.evaluateEligibility(values, ruleExpression);
+    Boolean eligible = CustomConditionEvaluator.evaluateCustomCondition(values, ruleExpression);
 
     System.debug('-->' + ruleName + '-->' + eligible);
 }
-// Boolean eligible = EligibilityEvaluator.evaluateEligibility(values, sample);
-
-// System.debug('-->' + 'sample' + '-->' + eligible);

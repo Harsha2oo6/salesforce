@@ -1,4 +1,4 @@
-import { LightningElement, wire } from 'lwc';
+import { LightningElement, wire, api } from 'lwc';
 import { publish, subscribe, unsubscribe, MessageContext, APPLICATION_SCOPE } from 'lightning/messageService';
 import PRODUCT_DATA_CHANNEL from '@salesforce/messageChannel/ProductDataChannel__c';
 import getProductDetails from '@salesforce/apex/ProductDetailsController.getProductDetails';
@@ -22,6 +22,15 @@ export default class PageDataProvider extends LightningElement {
 
     cachedMessage = null;
     subscription = null;
+    
+    // Configurable republish delays (in milliseconds)
+    // Can be overridden via public API if needed
+    @api republishDelays = [100, 300, 500, 1000];
+
+    connectedCallback() {
+        // Publish initial loading status
+        this.publishLoadingStatus();
+    }
 
     @wire(getProductDetails)
     wiredProductDetails({ error, data }) {
@@ -50,9 +59,18 @@ export default class PageDataProvider extends LightningElement {
         }
     }
 
-    connectedCallback() {
-        // Subscribe to listen for DATA_REQUEST messages from late-mounting components
-        this.subscribeToRequests();
+    /**
+     * Publish initial loading status message
+     * This allows subscribers to show loading state immediately
+     */
+    publishLoadingStatus() {
+        const loadingMessage = {
+            messageType: 'DATA_RESPONSE',
+            payload: null,
+            status: 'loading',
+            error: null
+        };
+        this.publishData(loadingMessage);
     }
 
     disconnectedCallback() {
@@ -95,16 +113,24 @@ export default class PageDataProvider extends LightningElement {
 
     /**
      * Schedule multiple re-publishes to catch late-connecting subscribers
+     * Uses configurable delays (default: [100, 300, 500, 1000]ms)
+     * Can be customized via @api republishDelays property
      */
     scheduleRepublish() {
-        const delays = [100, 300, 500, 1000];
+        // Use configured delays or default
+        const delays = Array.isArray(this.republishDelays) && this.republishDelays.length > 0
+            ? this.republishDelays
+            : [100, 300, 500, 1000];
+            
         delays.forEach(delay => {
+            // Validate delay is a positive number
+            const validDelay = typeof delay === 'number' && delay > 0 ? delay : 100;
             // eslint-disable-next-line @lwc/lwc/no-async-operation
             setTimeout(() => {
                 if (this.cachedMessage && this.messageContext) {
                     this.publishData(this.cachedMessage);
                 }
-            }, delay);
+            }, validDelay);
         });
     }
 

@@ -9,6 +9,7 @@ import {
 import submitForm from '@salesforce/apex/DynamicFormController.submitForm';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { validateField } from 'c/utilityValidators';
+import { validateDateConstraints } from 'c/utilityDateUtils';
 
 export default class DynamicFormContainer extends LightningElement {
   @api formName = 'default';
@@ -46,7 +47,14 @@ export default class DynamicFormContainer extends LightningElement {
     } catch (error) {
       this.isLoading = false;
       this.hasError = true;
-      this.errorMessage = 'Failed to load form configuration. Please try again.';
+      
+      // Extract error message from structured error
+      const errorMessage = error.message || 'Failed to load form configuration. Please try again.';
+      this.errorMessage = errorMessage;
+      
+      // Show toast for user feedback
+      this.showToast('Error', errorMessage, 'error');
+      
       console.error('Error loading form config:', error);
     }
   }
@@ -172,6 +180,21 @@ export default class DynamicFormContainer extends LightningElement {
       fieldConfig.validation_regexs || []
     );
 
+    // For date fields, also validate date constraints
+    if (fieldConfig.type === 'date_picker' && value) {
+      const dateConstraintError = validateDateConstraints(
+        value,
+        fieldConfig.min_date,
+        fieldConfig.max_date,
+        fieldConfig.exclude_dates,
+        fieldConfig.date_format || 'DD/MM/YYYY'
+      );
+
+      if (dateConstraintError) {
+        fieldErrors.push(dateConstraintError);
+      }
+    }
+
     this.errors = {
       ...this.errors,
       [fieldName]: fieldErrors
@@ -200,17 +223,30 @@ export default class DynamicFormContainer extends LightningElement {
         const isRequired = field.isRequired || false;
         const validationRules = field.validation_regexs || [];
         
-        const fieldErrors = validateField(
+        let fieldErrors = validateField(
           fieldValue,
           isRequired,
           validationRules
         );
 
+        // For date fields, also validate date constraints
+        if (field.type === 'date_picker' && fieldValue) {
+          const dateConstraintError = validateDateConstraints(
+            fieldValue,
+            field.min_date,
+            field.max_date,
+            field.exclude_dates,
+            field.date_format || 'DD/MM/YYYY'
+          );
+
+          if (dateConstraintError) {
+            fieldErrors.push(dateConstraintError);
+          }
+        }
 
         if (fieldErrors && Array.isArray(fieldErrors) && fieldErrors.length > 0) {
           newErrors[fieldName] = fieldErrors;
           hasErrors = true;
-        } else {
         }
       } catch (fieldError) {
         // Mark field as having errors if validation throws

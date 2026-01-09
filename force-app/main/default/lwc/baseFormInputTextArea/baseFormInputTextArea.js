@@ -28,6 +28,7 @@ export default class BaseFormInputTextArea extends LightningElement {
     this.dispatchEvent(
       new CustomEvent('fieldblur', {
         detail: {
+          field: this.field,
           value: value
         }
       })
