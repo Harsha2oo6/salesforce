@@ -1,10 +1,11 @@
-Map<String, Object> values = EligibilityController.getValuesPayload();
-List<Map<String, String>> rulesList = new List<Map<String, String>>();
 
-// Rule 1: NON_NAT_LEAD_SESSION_DURATION (Line 331)
-// Presales Lead Type is Non-NAT/null AND Session Duration > 30
-String NON_NAT_LEAD_SESSION_DURATION = '(values[PRODUCT_OPPORTUNITY["Presales_Lead_Type__c"]] === "Non-NAT Lead" || values[PRODUCT_OPPORTUNITY["Presales_Lead_Type__c"]] === null) && values[ACTIVITY["SESSION_ATTENDED_DURATION_MIN"]] > 30';
-rulesList.add(new Map<String, String>{'name' => 'NON_NAT_LEAD_SESSION_DURATION', 'rule' => NON_NAT_LEAD_SESSION_DURATION});
+
+
+
+List<Map<String, String>> rulesListNewSample = new List<Map<String, String>>();
+
+String newSample = '(values[\"PRODUCT_OPPORTUNITY\"][\"CreatedDate\"] < values[\"ACTIVITY\"][\"activity_datetime\"] && values[\"PRODUCT_OPPORTUNITY\"][\"LATEST_REGISTRATION_DATE_TIME__c\"] !== DATE_TODAY)';
+rulesListNewSample.add(new Map<String, String>{'name' => 'APPLICATION_IN_THIS_YEAR', 'rule' => newSample});
 
 // Rule 2: NURTURING_CHANNEL_NULL (Line 320)
 // Nurturing Channel is null

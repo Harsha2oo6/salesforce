@@ -1,0 +1,605 @@
+{
+    "fields": [
+      {
+        "field_id": "NAME__c",
+        "update_fields": [
+          {
+            "record_type": "PERSON_ACCOUNT",
+            "record_field_id": "FULL_NAME__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD_AND_EMPTY_IN_RECORD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "PARENT_NAME__c",
+        "update_fields": [
+          {
+            "record_type": "PERSON_ACCOUNT",
+            "record_field_id": "PAR_GAURD_NAME__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD_AND_EMPTY_IN_RECORD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "WHO_WILL_ATTEND__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "WHO_WILL_ATTEND_THE_PRESALES_SESSION__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "LANGUAGE__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "PREFERRED_LANGUAGE__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "ALL_PREFERRED_LANGUAGES__c",
+            "update_condition_type": "APPEND",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "SLOT_TIME__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "SESSION_PREFFERED_SLOT_TIME__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "SLOT_DATE__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "SESSION_PREFFERED_SLOT_DATE__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "HIGHEST_QUALIFICATION__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "HIGHEST_QUALIFICATION__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "TWELFTH_COMPLETION_YEAR__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "TWELFTH_COMPLETION_YEAR__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "STREAM__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "STREAM__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "YEAR_OF_GRADUATION__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "YEAR_OF_GRADUATION__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "UTM_CAMPAIGN__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "FIRST_UTM_CAMPAIGN__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD_AND_EMPTY_IN_RECORD",
+            "custom_condition": ""
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "NURTURING_UTM_CAMPAIGN__c",
+            "update_condition_type": "APPEND",
+            "custom_condition": ""
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "LATEST_UTM_CAMPAIGN__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "UTM_MEDIUM__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "FIRST_UTM_MEDIUM__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD_AND_EMPTY_IN_RECORD",
+            "custom_condition": ""
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "NURTURING_UTM_MEDIUM__c",
+            "update_condition_type": "APPEND",
+            "custom_condition": ""
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "LATEST_UTM_MEDIUM__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "UTM_SOURCE__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "FIRST_UTM_SOURCE__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD_AND_EMPTY_IN_RECORD",
+            "custom_condition": ""
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "NURTURING_UTM_SOURCE__c",
+            "update_condition_type": "APPEND",
+            "custom_condition": ""
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "LATEST_UTM_SOURCE__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "SOURCE__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "SOURCES__c",
+            "update_condition_type": "APPEND",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "FORM_ID__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "FORMS_SUBMITTED_BY_USER__c",
+            "update_condition_type": "APPEND",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "DISTRICT__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "DISTRICT__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "STATE__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "STATE__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "CENTER__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "NEAREST_EXPERIENCE_CENTER__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "LOCAL_NON_LOCAL__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "LOCAL_NON_LOCAL__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "EMAIL__c",
+        "update_fields": [
+          {
+            "record_type": "PERSON_ACCOUNT",
+            "record_field_id": "EMAIL__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD_AND_EMPTY_IN_RECORD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "TWELFTH_BOARD__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "TWELFTH_BOARD__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          }
+        ]
+      },
+      {
+        "field_id": "ACTIVITY_DATETIME__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "FIRST_APPROACHED_DATE_TIME__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD_AND_EMPTY_IN_RECORD",
+            "custom_condition": ""
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "LATEST_REGISTRATION_DATE_TIME__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "FIRST_RESURFACED_DATETIME__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[PRODUCT_OPPORTUNITY[CreatedDate]] < values[ACTIVITY[ACTIVITY_DATETIME__c]] && values[PRODUCT_OPPORTUNITY[LATEST_REGISTRATION_DATE_TIME__c]] !== DATE_TODAY && values[PRODUCT_OPPORTUNITY[FIRST_RESURFACED_DATETIME__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "LATEST_APPROACHED_DATE_TIME__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "LATEST_RESURFACED_DATETIME__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[PRODUCT_OPPORTUNITY[CreatedDate]] < values[ACTIVITY[ACTIVITY_DATETIME__c]] && values[PRODUCT_OPPORTUNITY[LATEST_REGISTRATION_DATE_TIME__c]] !== DATE_TODAY)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "NURTURING_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD_AND_EMPTY_IN_RECORD",
+            "custom_condition": ""
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "AFFILIATE_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === Affiliate && values[PRODUCT_OPPORTUNITY[AFFILIATE_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "EMPLOYEE_REFERRAL_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === Employee Referral && values[PRODUCT_OPPORTUNITY[EMPLOYEE_REFERRAL_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "INBOUND_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === Inbound && values[PRODUCT_OPPORTUNITY[INBOUND_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "OUTBOUND_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === Outbound && values[PRODUCT_OPPORTUNITY[OUTBOUND_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "IM_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === IM && values[PRODUCT_OPPORTUNITY[IM_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "OFFLINE_SCHOOL_CHANNEL_VISITS_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === Offline 12th College Visits && values[PRODUCT_OPPORTUNITY[OFFLINE_SCHOOL_CHANNEL_VISITS_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "INVITE_AND_EARN_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === Invite and Earn && values[PRODUCT_OPPORTUNITY[INVITE_AND_EARN_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "ASL_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === ASL && values[PRODUCT_OPPORTUNITY[ASL_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "DIGITAL_AFFILIATE_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === Digital Affiliate && values[PRODUCT_OPPORTUNITY[DIGITAL_AFFILIATE_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "NET_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === NET && values[PRODUCT_OPPORTUNITY[NET_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "REFERRAL_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === Referral && values[PRODUCT_OPPORTUNITY[REFERRAL_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "DIGITAL_MARKETING_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === Digital Marketing && values[PRODUCT_OPPORTUNITY[DIGITAL_MARKETING_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "BRAND_SEARCH_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === Brand Search && values[PRODUCT_OPPORTUNITY[BRAND_SEARCH_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "SEO_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === SEO && values[PRODUCT_OPPORTUNITY[SEO_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "INVITE_EARNBOOT_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === Invite and Earn Bootcamp && values[PRODUCT_OPPORTUNITY[INVITE_EARNBOOT_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "COLLEGE_DOST_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === College Dost && values[PRODUCT_OPPORTUNITY[COLLEGE_DOST_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "AUXILIARY_CONTENT_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === Auxiliary Content && values[PRODUCT_OPPORTUNITY[AUXILIARY_CONTENT_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "BTL_ACTIVITY_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === BTL Activity && values[PRODUCT_OPPORTUNITY[BTL_ACTIVITY_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "ADMISSION_CONSULTANT_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === Affiliate - Admission Consultants && values[PRODUCT_OPPORTUNITY[ADMISSION_CONSULTANT_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "PRINCIPAL_AFFILIATE_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === Affiliate - Principals && values[PRODUCT_OPPORTUNITY[PRINCIPAL_AFFILIATE_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "BRAND_ENGAGEMENT_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === Brand Engagement && values[PRODUCT_OPPORTUNITY[BRAND_ENGAGEMENT_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "COLLEGE_DUNIA_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === College Dunia && values[PRODUCT_OPPORTUNITY[COLLEGE_DUNIA_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "COLLEGE_DEKHO_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === College Dekho && values[PRODUCT_OPPORTUNITY[COLLEGE_DEKHO_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "JUSTDIAL_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === Justdial && values[PRODUCT_OPPORTUNITY[JUSTDIAL_CHANNEL_ENTRY_DATE__c]] === null)"
+          },
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "ASSL_CHANNEL_ENTRY_DATE__c",
+            "update_condition_type": "CUSTOM",
+            "custom_condition": "(values[ACTIVITY[CHANNEL__c]] === ASSL && values[PRODUCT_OPPORTUNITY[ASSL_CHANNEL_ENTRY_DATE__c]] === null)"
+          }
+        ]
+      },
+      {
+        "field_id": "TWELFTH_SCHOOL_INTERMEDIATE_COLLEGE_NAME__c",
+        "update_fields": [
+          {
+            "record_type": "PRODUCT_OPPORTUNITY",
+            "record_field_id": "TWELTH_SCHOOL_INTERMEDIATE_COLLEGE_NAME__c",
+            "update_condition_type": "ALWAYS_WHEN_NOT_EMPTY_IN_PAYLOAD",
+            "custom_condition": ""
+          }
+        ]
+      }
+    ]
+  };
+ 
+  {
+    "conditional_field_updates": [
+      {
+        "record_type": "PRODUCT_OPPORTUNITY",
+        "record_field_id": "LEAD_ORIGIN__c",
+        "update_conditions": [
+          {
+            "condition": "(values[PRODUCT_OPPORTUNITY[LEAD_ORIGIN__c]] === null)",
+            "value_type": "FIXED_VALUE",
+            "value": "Webinar Registration"
+          }
+        ]
+      },
+      {
+        "record_type": "PRODUCT_OPPORTUNITY",
+        "record_field_id": "RESURFACED_COUNT__c",
+        "update_conditions": [
+          {
+            "condition": "(values[PRODUCT_OPPORTUNITY[CreatedDate]] < values[ACTIVITY[ACTIVITY_DATETIME__c]])",
+            "value_type": "INCREMENT_BY_ONE",
+            "value": null
+          }
+        ]
+      },
+      {
+        "record_type": "PRODUCT_OPPORTUNITY",
+        "record_field_id": "PRESALES_LEAD_JOURNEY__c",
+        "update_conditions": [
+          {
+            "condition": "(values[PRODUCT_OPPORTUNITY[LATEST_QUALIFIED_DATE_TIME__c]] === null && values[PRODUCT_OPPORTUNITY[PRESALES_LEAD_JOURNEY__c]] === null)",
+            "value_type": "FIXED_VALUE",
+            "value": "Non-NAT"
+          }
+        ]
+      },
+      {
+        "record_type": "PRODUCT_OPPORTUNITY",
+        "record_field_id": "RESURFACED_LEAD_STATUS__c",
+        "update_conditions": [
+          {
+            "condition": "(values[PRODUCT_OPPORTUNITY[CreatedDate]] < values[ACTIVITY[ACTIVITY_DATETIME__c]])",
+            "value_type": "FIXED_VALUE",
+            "value": "Resurfaced - Yet to Call"
+          }
+        ]
+      },
+      {
+        "record_type": "PRODUCT_OPPORTUNITY",
+        "record_field_id": "PRESALES_RESURFACE_CALL_ATTEMPT_COUNT__c",
+        "update_conditions": [
+          {
+            "condition": "",
+            "value_type": "FIXED_VALUE",
+            "value": null
+          }
+        ]
+      },
+      {
+        "record_type": "PRODUCT_OPPORTUNITY",
+        "record_field_id": "CBA_UNSUCCESSFUL_RESURFACE_CALLS__c",
+        "update_conditions": [
+          {
+            "condition": "",
+            "value_type": "FIXED_VALUE",
+            "value": null
+          }
+        ]
+      },
+      {
+        "record_type": "PRODUCT_OPPORTUNITY",
+        "record_field_id": "CBA_SUCCESSFUL_RESURFACE_CALLS__c",
+        "update_conditions": [
+          {
+            "condition": "",
+            "value_type": "FIXED_VALUE",
+            "value": null
+          }
+        ]
+      },
+      {
+        "record_type": "PRODUCT_OPPORTUNITY",
+        "record_field_id": "LEAD_APPROACHED_COUNT__c",
+        "update_conditions": [
+          {
+            "condition": "(values[PRODUCT_OPPORTUNITY[CreatedDate]] > values[ACTIVITY[ACTIVITY_DATETIME__c]] && values[PRODUCT_OPPORTUNITY[LATEST_REGISTRATION_DATE_TIME__c]] !== DATE_TODAY)",
+            "value_type": "INCREMENT_BY_ONE",
+            "value": null
+          }
+        ]
+      },
+      {
+        "record_type": "PRODUCT_OPPORTUNITY",
+        "record_field_id": "DND_STATUS__c",
+        "update_conditions": [
+          {
+            "condition": "",
+            "value_type": "FIXED_VALUE",
+            "value": "Non DND"
+          }
+        ]
+      },
+      {
+        "record_type": "PRODUCT_OPPORTUNITY",
+        "record_field_id": "WEBINAR_LIVE_SESSION_STATUS__c",
+        "update_conditions": [
+          {
+            "condition": "",
+            "value_type": "FIXED_VALUE",
+            "value": "Registered for Webinar/ Live Session"
+          }
+        ]
+      }
+    ]
+  }
+
+  {
+    "opportunity_stage_update_conditions": [
+      {
+        "condition": "values[PRODUCT_OPPORTUNITY[\"First_Qualified_Date_Time__c\"]] === null && (values[PRODUCT_OPPORTUNITY[\"STAGE__c\"]] === \"Repository\" || values[PRODUCT_OPPORTUNITY[\"STAGE__c\"]] === \"Presales Call Initiated\" || values[PRODUCT_OPPORTUNITY[\"STAGE__c\"]] === \"Presales Nurturing Phase\" || values[PRODUCT_OPPORTUNITY[\"STAGE__c\"]] === \"Lead Lost\")",
+        "update_stage": "Registered For Webinar"
+      }
+    ],
+    "new_opportunity_stage": "Registered For Webinar"
+  }
+   
