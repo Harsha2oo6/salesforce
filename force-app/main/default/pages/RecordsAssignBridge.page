@@ -1,0 +1,23 @@
+<apex:page standardController="Branch__c" recordSetVar="branches">
+    <script>
+        var selectedIds = [];
+        <apex:repeat value="{!selected}" var="b">
+            selectedIds.push('{!b.Id}');
+        </apex:repeat>
+
+        if (selectedIds.length > 0) {
+            var idsString = selectedIds.join(',');
+            // PASS ACTION = ASSIGN
+            var targetUrl = '/lightning/cmp/c__branchShare?c__ids=' + idsString + '&c__action=ASSIGN';
+
+            if (typeof sforce !== 'undefined' && sforce.one) {
+                sforce.one.navigateToURL(targetUrl);
+            } else {
+                window.location.href = targetUrl;
+            }
+        } else {
+            alert('Please select at least one branch.');
+            window.history.back();
+        }
+    </script>
+</apex:page>
