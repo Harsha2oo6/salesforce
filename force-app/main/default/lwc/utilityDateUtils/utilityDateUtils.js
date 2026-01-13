@@ -109,15 +109,42 @@ export function validateDateConstraints(dateString, minDate, maxDate, excludeDat
   }
 
   try {
-    const date = new Date(dateString + 'T00:00:00');
+    // Normalize dateString to ISO format (YYYY-MM-DD)
+    // Handle datetime format (YYYY-MM-DD HH:MM:SS) by extracting just the date part
+    let datePart = dateString;
+    if (dateString.includes(' ')) {
+      // It's a datetime string, extract just the date part
+      datePart = dateString.split(' ')[0];
+    } else if (dateString.includes('T')) {
+      // It's an ISO datetime string, extract just the date part
+      datePart = dateString.split('T')[0];
+    }
+
+    // Validate ISO date format (YYYY-MM-DD)
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+      return 'Invalid date';
+    }
+
+    // Parse the date part to ensure it's a valid date
+    const date = new Date(datePart + 'T00:00:00');
     if (isNaN(date.getTime())) {
+      return 'Invalid date';
+    }
+
+    // Verify the parsed date matches the input (handles invalid dates like Feb 30)
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const normalizedDate = `${year}-${month}-${day}`;
+    
+    if (normalizedDate !== datePart) {
       return 'Invalid date';
     }
 
     // Check min_date
     if (minDate) {
       const minDateIso = parseDateFromDisplay(minDate, format);
-      if (minDateIso && dateString < minDateIso) {
+      if (minDateIso && datePart < minDateIso) {
         return `Date must be on or after ${minDate}`;
       }
     }
@@ -125,14 +152,14 @@ export function validateDateConstraints(dateString, minDate, maxDate, excludeDat
     // Check max_date
     if (maxDate) {
       const maxDateIso = parseDateFromDisplay(maxDate, format);
-      if (maxDateIso && dateString > maxDateIso) {
+      if (maxDateIso && datePart > maxDateIso) {
         return `Date must be on or before ${maxDate}`;
       }
     }
 
     // Check exclude_dates
     if (excludeDates && Array.isArray(excludeDates) && excludeDates.length > 0) {
-      const dateDisplay = formatDateForDisplay(dateString, format);
+      const dateDisplay = formatDateForDisplay(datePart, format);
       if (excludeDates.includes(dateDisplay)) {
         return 'This date is not available';
       }
@@ -173,3 +200,129 @@ export function toLightningDateFormat(dateString) {
   return `${year}-${month}-${day}`;
 }
 
+/**
+ * Converts datetime string to format expected by lightning-input type="datetime" (ISO format with seconds)
+ * @param {string} dateTimeString - DateTime in format YYYY-MM-DD HH:MM:SS or ISO format
+ * @returns {string} - DateTime in YYYY-MM-DDTHH:mm:ss format for Salesforce datetime input
+ */
+export function toLightningDateTimeFormat(dateTimeString) {
+  if (!dateTimeString) {
+    return '';
+  }
+
+  // If already in ISO format (contains T), return as-is
+  // Salesforce datetime handles timezone automatically
+  if (dateTimeString.includes('T')) {
+    return dateTimeString;
+  }
+
+  // Convert from storage format (YYYY-MM-DD HH:MM:SS) to ISO format (YYYY-MM-DDTHH:mm:ss)
+  return dateTimeString.replace(' ', 'T');
+}
+
+/**
+ * Parses a datetime string from display format to storage format
+ * @param {string} dateTimeString - DateTime in display format (YYYY-MM-DD HH:MM:SS or DD/MM/YYYY HH:MM:SS)
+ * @param {string} format - Display format (YYYY-MM-DD HH:MM:SS, DD/MM/YYYY HH:MM:SS)
+ * @returns {string} - DateTime in YYYY-MM-DD HH:MM:SS format or empty string if invalid
+ */
+export function parseDateTimeFromDisplay(dateTimeString, format) {
+  if (!dateTimeString || typeof dateTimeString !== 'string') {
+    return '';
+  }
+
+  try {
+    // Handle YYYY-MM-DD HH:MM:SS format
+    if (format === 'YYYY-MM-DD HH:MM:SS' || format === 'YYYY-MM-DD HH:mm:ss') {
+      const parts = dateTimeString.split(' ');
+      if (parts.length === 2) {
+        const datePart = parts[0];
+        const timePart = parts[1];
+        if (/^\d{4}-\d{2}-\d{2}$/.test(datePart) && /^\d{2}:\d{2}:\d{2}$/.test(timePart)) {
+          return dateTimeString;
+        }
+      }
+    }
+
+    // Handle DD/MM/YYYY HH:MM:SS format
+    if (format === 'DD/MM/YYYY HH:MM:SS' || format === 'DD/MM/YYYY HH:mm:ss') {
+      const parts = dateTimeString.split(' ');
+      if (parts.length === 2) {
+        const datePart = parts[0];
+        const timePart = parts[1];
+        const dateIso = parseDateFromDisplay(datePart, 'DD/MM/YYYY');
+        if (dateIso && /^\d{2}:\d{2}:\d{2}$/.test(timePart)) {
+          return `${dateIso} ${timePart}`;
+        }
+      }
+    }
+
+    // Try to parse as Date
+    const date = new Date(dateTimeString);
+    if (isNaN(date.getTime())) {
+      return '';
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  } catch (error) {
+    console.warn('DateTime parsing error:', error);
+    return '';
+  }
+}
+
+/**
+ * Formats a datetime string to display format
+ * @param {string} dateTimeString - DateTime in storage format (YYYY-MM-DD HH:MM:SS)
+ * @param {string} format - Display format (YYYY-MM-DD HH:MM:SS, DD/MM/YYYY HH:MM:SS)
+ * @returns {string} - Formatted datetime string
+ */
+export function formatDateTimeForDisplay(dateTimeString, format) {
+  if (!dateTimeString) {
+    return '';
+  }
+
+  try {
+    let date, time;
+    
+    // Parse the datetime string
+    if (dateTimeString.includes('T')) {
+      const [datePart, timePart] = dateTimeString.split('T');
+      date = new Date(datePart + 'T' + (timePart || '00:00:00'));
+    } else if (dateTimeString.includes(' ')) {
+      const [datePart, timePart] = dateTimeString.split(' ');
+      date = new Date(datePart + 'T' + (timePart || '00:00:00'));
+    } else {
+      date = new Date(dateTimeString + 'T00:00:00');
+    }
+
+    if (isNaN(date.getTime())) {
+      return dateTimeString; // Return original if invalid
+    }
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    if (format === 'YYYY-MM-DD HH:MM:SS' || format === 'YYYY-MM-DD HH:mm:ss') {
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    } else if (format === 'DD/MM/YYYY HH:MM:SS' || format === 'DD/MM/YYYY HH:mm:ss') {
+      return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+    } else {
+      // Default to YYYY-MM-DD HH:MM:SS
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+  } catch (error) {
+    console.warn('DateTime formatting error:', error);
+    return dateTimeString;
+  }
+}

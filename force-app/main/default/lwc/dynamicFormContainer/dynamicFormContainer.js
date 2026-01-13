@@ -180,14 +180,14 @@ export default class DynamicFormContainer extends LightningElement {
       fieldConfig.validation_regexs || []
     );
 
-    // For date fields, also validate date constraints
-    if (fieldConfig.type === 'date_picker' && value) {
+    // For date and datetime fields, also validate date constraints
+    if ((fieldConfig.type === 'date' || fieldConfig.type === 'datetime') && value) {
       const dateConstraintError = validateDateConstraints(
         value,
         fieldConfig.min_date,
         fieldConfig.max_date,
         fieldConfig.exclude_dates,
-        fieldConfig.date_format || 'DD/MM/YYYY'
+        fieldConfig.format || 'DD/MM/YYYY'
       );
 
       if (dateConstraintError) {
@@ -229,14 +229,14 @@ export default class DynamicFormContainer extends LightningElement {
           validationRules
         );
 
-        // For date fields, also validate date constraints
-        if (field.type === 'date_picker' && fieldValue) {
+        // For date and datetime fields, also validate date constraints
+        if ((field.type === 'date' || field.type === 'datetime') && fieldValue) {
           const dateConstraintError = validateDateConstraints(
             fieldValue,
             field.min_date,
             field.max_date,
             field.exclude_dates,
-            field.date_format || 'DD/MM/YYYY'
+            field.format || 'DD/MM/YYYY'
           );
 
           if (dateConstraintError) {
@@ -279,7 +279,7 @@ export default class DynamicFormContainer extends LightningElement {
         values: this.values,
         timestamp: new Date().toISOString()
       };
-      
+      console.log('formData', JSON.stringify(formData));
       const result = await submitForm({ formValuesJson: JSON.stringify(formData) });
       
       this.isSubmitting = false;
@@ -344,4 +344,3 @@ export default class DynamicFormContainer extends LightningElement {
     this.dispatchEvent(evt);
   }
 }
-

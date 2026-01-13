@@ -98,14 +98,34 @@
         </template>
     </template>
 
-    <template if:true={isDatePicker}>
+    <template if:true={isDate}>
         <template if:true={fieldConfig}>
             <c-base-form-input-date
                 field={fieldConfig.field}
                 label={fieldConfig.label}
                 is-required={fieldConfig.isRequired}
+                type="date"
                 value={fieldValue}
-                date-format={fieldConfig.date_format}
+                date-format={fieldConfig.format}
+                min-date={fieldConfig.min_date}
+                max-date={fieldConfig.max_date}
+                exclude-dates={fieldConfig.exclude_dates}
+                error-message={errorMessage}
+                onvaluechange={handleValueChange}
+                onfieldblur={handleFieldBlur}
+            ></c-base-form-input-date>
+        </template>
+    </template>
+
+    <template if:true={isDateTime}>
+        <template if:true={fieldConfig}>
+            <c-base-form-input-date
+                field={fieldConfig.field}
+                label={fieldConfig.label}
+                is-required={fieldConfig.isRequired}
+                type="datetime"
+                value={fieldValue}
+                date-format={fieldConfig.format}
                 min-date={fieldConfig.min_date}
                 max-date={fieldConfig.max_date}
                 exclude-dates={fieldConfig.exclude_dates}

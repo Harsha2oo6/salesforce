@@ -35,8 +35,12 @@ export default class DynamicFormField extends LightningElement {
     return this.fieldConfig?.type === 'checkbox';
   }
 
-  get isDatePicker() {
-    return this.fieldConfig?.type === 'date_picker';
+  get isDate() {
+    return this.fieldConfig?.type === 'date';
+  }
+
+  get isDateTime() {
+    return this.fieldConfig?.type === 'datetime';
   }
 
   get filteredOptions() {
@@ -81,4 +85,3 @@ export default class DynamicFormField extends LightningElement {
     );
   }
 }
-

@@ -109,7 +109,7 @@ public with sharing class DynamicFormController {
     phoneField.put('label', 'Mobile Number');
     phoneField.put('placeHolder', 'Enter mobile number');
     phoneField.put('helperText', 'Used for OTP verification');
-    phoneField.put('isRequired', true);
+    phoneField.put('isRequired', false);
     phoneField.put('defaultValue', '');
     phoneField.put('relevantCondition', 'true');
     phoneField.put('relevantFields', new List<String>());
@@ -268,22 +268,37 @@ public with sharing class DynamicFormController {
 
     // Field 8: Date Picker (conditional - appears when user_type is 'admin')
     Map<String, Object> dateField = new Map<String, Object>();
-    dateField.put('type', 'date_picker');
+    dateField.put('type', 'date');
     dateField.put('field', 'activation_date');
     dateField.put('label', 'Activation Date');
     dateField.put('isRequired', true);
     dateField.put('defaultValue', '');
-    dateField.put('relevantCondition', 'values[\'user_type\'] === \'admin\'');
+    // dateField.put('relevantCondition', 'values[\'user_type\'] === \'admin\'');
     List<String> dateRelevantFields = new List<String>{ 'user_type' };
     dateField.put('relevantFields', dateRelevantFields);
     dateField.put('validation_regexs', new List<Map<String, Object>>());
-    dateField.put('date_format', 'DD/MM/YYYY');
+    dateField.put('format', 'DD/MM/YYYY');
     dateField.put('min_date', '01/01/2024');
     dateField.put('max_date', '31/12/2026');
     List<String> excludeDates = new List<String>{ '25/12/2025' };
     dateField.put('exclude_dates', excludeDates);
     fields.add(dateField);
+    // Field 9: Date Time Picker (conditional - appears when user_type is 'admin')
+    Map<String, Object> dateTimeField = new Map<String, Object>();
+    dateTimeField.put('type', 'datetime');
+    dateTimeField.put('field', 'activation_date_time');
+    dateTimeField.put('label', 'Activation Date Time');
+    dateTimeField.put('isRequired', true);
+    dateTimeField.put('defaultValue', '');
+    // dateTimeField.put('relevantCondition', 'values[\'user_type\'] === \'admin\'');
+    List<String> dateTimeRelevantFields = new List<String>{ 'user_type' };
+    dateTimeField.put('relevantFields', dateTimeRelevantFields);
+    dateTimeField.put('validation_regexs', new List<Map<String, Object>>());
+    dateTimeField.put('format', 'YYYY-MM-DD HH:MM:SS');
+    dateTimeField.put('min_date', '01/01/2024 00:00:00');
+    dateTimeField.put('max_date', '31/12/2026 23:59:59');
 
+    fields.add(dateTimeField);
     config.put('fields', fields);
     return JSON.serialize(config);
   }
