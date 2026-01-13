@@ -1,0 +1,92 @@
+<template>
+    <lightning-card title={cardTitle} icon-name="standard:branch">
+        <div class="slds-p-around_medium">
+            <!-- Loading Spinner -->
+            <template if:true={isLoading}>
+                <c-common-loader loader-size="medium"></c-common-loader>
+            </template>
+
+            <!-- Main Content -->
+            <template if:false={isLoading}>
+                <!-- Show form before submit -->
+                <template if:true={showForm}>
+                    <template if:true={hasRecords}>
+            
+                        <!-- Role Selection -->
+                        <div class="slds-m-top_medium">
+                            <c-base-form-input-select
+                                label="Select Role"
+                                value={selectedRole}
+                                options={roleOptions}
+                                placeholder="Select a role"
+                                onvaluechange={handleRoleChange}>
+                            </c-base-form-input-select>
+                        </div>
+
+                        <!-- User Selection -->
+                        <div class="slds-m-top_medium">
+                            <c-base-form-input-select
+                                label="Select User"
+                                value={selectedUserId}
+                                options={userOptions}
+                                placeholder={userPlaceholder}
+                                disabled={isUserComboboxDisabled}
+                                onvaluechange={handleUserChange}>
+                            </c-base-form-input-select>
+                            <template if:true={isLoadingUsers}>
+                                <div class="slds-m-top_small slds-text-align_center">
+                                    <c-common-loader loader-size="small" ></c-common-loader>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <template if:false={hasRecords}>
+                        <div class="slds-text-color_error">
+                            No records were selected or passed correctly.
+                        </div>
+                    </template>
+                </template>
+
+                <!-- Post-submit screen -->
+                <template if:true={showPostSubmit}>
+                    <div class="slds-notify slds-notify_alert slds-theme_success slds-m-bottom_medium" role="alert">
+                        <span class="slds-assistive-text">success</span>
+                        <h2>{assignmentSuccessMessage}</h2>
+                    </div>
+                </template>
+            </template>
+        </div>
+
+        <!-- Footer Buttons -->
+        <div slot="footer">
+            <!-- Before submit: Cancel + Save -->
+            <template if:true={showForm}>
+                <lightning-button 
+                    label="Cancel" 
+                    variant="neutral"
+                    onclick={handleGoBack} 
+                    class="slds-m-right_small"
+                    disabled={isLoading}>
+                </lightning-button>
+                
+                <lightning-button 
+                    variant="brand" 
+                    label="Save" 
+                    onclick={handleSave}
+                    disabled={isSaveDisabled}>
+                </lightning-button>
+            </template>
+
+            <!-- After submit: Go Back button -->
+            <template if:true={showPostSubmit}>
+                <lightning-button 
+                    variant="brand" 
+                    label="Go Back" 
+                    onclick={handleGoBack}
+                    disabled={isLoading}>
+                </lightning-button>
+            </template>
+        </div>
+    </lightning-card>
+</template>

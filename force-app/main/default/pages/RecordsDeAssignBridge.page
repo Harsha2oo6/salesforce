@@ -7,8 +7,8 @@
 
         if (selectedIds.length > 0) {
             var idsString = selectedIds.join(',');
-            // PASS ACTION = ASSIGN
-            var targetUrl = '/lightning/cmp/c__componentListButton?c__ids=' + idsString + '&c__action=ASSIGN';
+            // PASS ACTION = DEASSIGN
+            var targetUrl = '/lightning/cmp/c__componentListButton?c__ids=' + idsString + '&c__action=DEASSIGN';
 
             if (typeof sforce !== 'undefined' && sforce.one) {
                 sforce.one.navigateToURL(targetUrl);
