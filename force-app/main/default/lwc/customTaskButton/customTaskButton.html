@@ -1,0 +1,36 @@
+<template>
+    <div class="slds-grid slds-wrap">
+    <template if:true={isLoadingTasks}>
+        <div class="slds-var-m-right_x-small slds-var-m-bottom_x-small">
+            <c-common-loader loader-size="small"></c-common-loader>
+        </div>
+    </template>
+
+    <template if:false={isLoadingTasks}>
+        <template if:false={taskError}>
+            <template if:true={hasTasks}>
+                <template for:each={tasks} for:item="task">
+
+                    <div key={task.task_activity_code} class="slds-var-m-right_x-small slds-var-m-bottom_x-small">
+                        <c-common-popup-button button-label={task.task_form_config.title}>
+                            <c-dynamic-form-container form-title={task.task_form_config.title}
+                                form-activity-code={task.task_activity_code} config={task.task_form_config}
+                                onformsubmit={handleActivitySubmit}>
+                            </c-dynamic-form-container>
+                        </c-common-popup-button>
+                    </div>
+
+                </template>
+            </template>
+        </template>
+
+        <template if:true={taskError}>
+            <div class="slds-col slds-size_1-of-1">
+                <p class="slds-text-color_error">
+                    Error loading tasks: {taskError}
+                </p>
+            </div>
+        </template>
+    </template>
+    </div>
+</template>

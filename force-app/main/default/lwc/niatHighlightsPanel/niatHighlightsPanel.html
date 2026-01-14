@@ -1,9 +1,23 @@
 <template>
     <lightning-card title="Custom page" icon-name="utility:settings" variant="narrow">
-         <div class="slds-p-around_medium slds-grid_align-end slds-grid_vertical-align-center">
-            <c-common-popup-button button-label="Call" >
-                <c-niat-call-steps onpayloadtosendtoparent={handlePayloadToSendToParent}></c-niat-call-steps>
+      <div class="slds-p-around_medium">
+  
+        <div class="slds-grid slds-wrap slds-grid_vertical-align-center">
+  
+          <div class="slds-var-m-right_x-small slds-var-m-bottom_x-small">
+            <c-common-popup-button button-label="Call">
+              <c-niat-call-steps onactivitysubmit={handleActivitySubmit}></c-niat-call-steps>
             </c-common-popup-button>
-        </div> 
+          </div>
+          
+          <div class="slds-var-m-right_x-small slds-var-m-bottom_x-small">
+            <c-common-popup-button button-label="Sharable Resources">
+              <c-custom-task-button record-id={recordId}></c-custom-task-button>
+            </c-common-popup-button>
+          </div>
+            <c-custom-task-button record-id={recordId}></c-custom-task-button>
+        
+        </div>
+      </div>
     </lightning-card>
-</template>
+  </template>

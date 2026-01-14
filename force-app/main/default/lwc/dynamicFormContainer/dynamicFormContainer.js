@@ -14,8 +14,9 @@ import { validateDateConstraints } from 'c/utilityDateUtils';
 export default class DynamicFormContainer extends LightningElement {
   @api formName = 'default';
   @api formTitle = 'Dynamic Form';
+  @api formActivityCode = null;
+  @api config = null;
 
-  @track config = null;
   @track values = {};
   @track visibleFields = [];
   @track errors = {};
@@ -34,7 +35,7 @@ export default class DynamicFormContainer extends LightningElement {
       this.hasError = false;
       this.errorMessage = '';
 
-      const config = await fetchFormConfig(this, this.formName);
+      const config = this.config ? this.config : await fetchFormConfig(this, this.formName);
       this.config = config;
 
       // Initialize form values
@@ -47,14 +48,14 @@ export default class DynamicFormContainer extends LightningElement {
     } catch (error) {
       this.isLoading = false;
       this.hasError = true;
-      
+
       // Extract error message from structured error
       const errorMessage = error.message || 'Failed to load form configuration. Please try again.';
       this.errorMessage = errorMessage;
-      
+
       // Show toast for user feedback
       this.showToast('Error', errorMessage, 'error');
-      
+
       console.error('Error loading form config:', error);
     }
   }
@@ -202,7 +203,7 @@ export default class DynamicFormContainer extends LightningElement {
   }
 
   validateAllFields() {
-    
+
     const newErrors = {};
     let hasErrors = false;
 
@@ -215,14 +216,14 @@ export default class DynamicFormContainer extends LightningElement {
       return true;
     }
 
-    
+
     this.visibleFields.forEach((field, index) => {
       try {
         const fieldName = field.field;
         const fieldValue = this.values[fieldName];
         const isRequired = field.isRequired || false;
         const validationRules = field.validation_regexs || [];
-        
+
         let fieldErrors = validateField(
           fieldValue,
           isRequired,
@@ -254,7 +255,7 @@ export default class DynamicFormContainer extends LightningElement {
         hasErrors = true;
       }
     });
-    
+
     this.errors = newErrors;
     const result = !hasErrors;
     return result;
@@ -263,7 +264,7 @@ export default class DynamicFormContainer extends LightningElement {
   async handleSubmit() {
     // Validate all fields
     const validationResult = this.validateAllFields();
-    
+
     if (!validationResult) {
       this.showToast('Error', 'Please fix the errors before submitting', 'error');
       return;
@@ -272,16 +273,29 @@ export default class DynamicFormContainer extends LightningElement {
 
     try {
       this.isSubmitting = true;
-      
-      // Prepare form data
-      const formData = {
-        formName: this.formName,
-        values: this.values,
-        timestamp: new Date().toISOString()
+
+      // Build activityDetails as an array of { field_id, value }
+      const activityDetailsArray = Object.entries(this.values || {}).map(
+        ([fieldId, value]) => ({
+          field_id: fieldId,
+          value: value
+        })
+      );
+
+      const activityFormData = {
+        activity_code: this.formActivityCode,
+        activity_details: activityDetailsArray,
+        activity_datetime: new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Kolkata' })
       };
-      console.log('formData', JSON.stringify(formData));
-      const result = await submitForm({ formValuesJson: JSON.stringify(formData) });
-      
+      // Prepare form data
+      // const formData = {
+      //   formName: this.formName,
+      //   values: this.values,
+      //   timestamp: new Date().toISOString()
+      // };
+      console.log('activityFormData', (JSON.stringify(activityFormData)));
+      const result = await submitForm({ formValuesJson: JSON.stringify(activityFormData) });
+
       this.isSubmitting = false;
 
       // Parse result with error handling
@@ -306,7 +320,7 @@ export default class DynamicFormContainer extends LightningElement {
         this.dispatchEvent(
           new CustomEvent('formsubmit', {
             detail: {
-              values: this.values,
+              formData: JSON.stringify(activityFormData),
               result: resultObj
             }
           })
@@ -316,13 +330,13 @@ export default class DynamicFormContainer extends LightningElement {
       }
     } catch (error) {
       this.isSubmitting = false;
-      
-      const errorMessage = 
-        error.body?.message || 
+
+      const errorMessage =
+        error.body?.message ||
         error.body?.pageErrors?.[0]?.message ||
-        error.message || 
+        error.message ||
         'Failed to submit form';
-      
+
       this.showToast('Error', errorMessage, 'error');
     }
   }
