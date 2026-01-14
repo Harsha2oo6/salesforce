@@ -325,6 +325,9 @@ export default class DynamicFormContainer extends LightningElement {
             }
           })
         );
+
+        // Close the popup/modal that contains this form
+        this.sendCloseModalEvent();
       } else {
         this.showToast('Error', resultObj.message || 'Failed to submit form', 'error');
       }
@@ -356,5 +359,18 @@ export default class DynamicFormContainer extends LightningElement {
       mode: 'dismissable'
     });
     this.dispatchEvent(evt);
+  }
+
+  /**
+   * Dispatch a bubbling, composed event to request the parent popup to close.
+   * Mirrors the behavior of niatCallSteps.sendCloseModelEventToPopupButton().
+   */
+  sendCloseModalEvent() {
+    this.dispatchEvent(
+      new CustomEvent('closemodal', {
+        bubbles: true,
+        composed: true
+      })
+    );
   }
 }
