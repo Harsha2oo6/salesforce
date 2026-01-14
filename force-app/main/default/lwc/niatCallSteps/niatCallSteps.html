@@ -61,7 +61,7 @@
 
             <!-- FORM STATE -->
             <template if:false={isUploading}>
-                <c-dynamic-form-container ></c-dynamic-form-container>
+                <slot></slot>
                 <!-- <div class="slds-form" role="form">
                     <lightning-input type="text" label="Full Name" name="fullName" data-field="fullName"
                         placeholder="Enter full name" value={fullName} onchange={handleFullNameChange}></lightning-input>
