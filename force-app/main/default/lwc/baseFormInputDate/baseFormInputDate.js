@@ -89,28 +89,26 @@ export default class BaseFormInputDate extends LightningElement {
 
   handleChange(event) {
     let newValue = event.target.value;
-    
+
     if (this.type === 'datetime') {
-      // For datetime, Salesforce returns ISO format (YYYY-MM-DDTHH:mm:ss or YYYY-MM-DDTHH:mm:ssZ)
-      // Convert to YYYY-MM-DD HH:MM:SS format for storage (without timezone, as it's handled by Salesforce)
-      if (newValue && newValue.includes('T')) {
-        // Remove timezone if present (Z or +HH:mm)
-        newValue = newValue.replace(/Z$/, '').replace(/[+-]\d{2}:\d{2}$/, '');
-        // Convert T to space and ensure seconds are present
-        const [datePart, timePart] = newValue.split('T');
-        if (timePart) {
-          const timeParts = timePart.split(':');
-          const hours = timeParts[0] || '00';
-          const minutes = timeParts[1] || '00';
-          const seconds = timeParts[2] || '00';
-          newValue = `${datePart} ${hours}:${minutes}:${seconds}`;
-        }
+      if (newValue) {
+        // 1. Create a Date object to handle the Timezone conversion automatically
+        const dateObj = new Date(newValue);
+
+        // 2. Extract the parts in Local Time (IST)
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        const hours = String(dateObj.getHours()).padStart(2, '0');
+        const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+        const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+
+        // 3. Construct the string in Local Time format
+        newValue = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
       }
-    } else {
-      // For date, value is already in YYYY-MM-DD format (ISO)
-      // Store as-is
     }
-    
+    // No else needed for date type as it is already correct
+
     this.dispatchValueChange(newValue);
   }
 

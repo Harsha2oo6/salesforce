@@ -51,16 +51,16 @@ Map<String, Object> values = new Map<String, Object>{
     }
 };
 
-// List<String> conditions = ConditionTestHelper.getConditions();
-// integer i = 0;
-// for (String condition : conditions) {
-//     i++;
-//     Boolean eligible = CustomConditionEvaluator.evaluateCondition(values, condition);
-//     System.debug('-->' + 'condition' +i + '-->'+ eligible);
-// }
+List<String> conditions = ConditionTestHelper.getConditions();
+integer i = 0;
+for (String condition : conditions) {
+    i++;
+    Boolean eligible = CustomConditionEvaluator.evaluateCondition(values, condition);
+    System.debug('-->' + 'condition' +i + '-->'+ eligible);
+}
 // Object createdDate = ((Map<String, Object>)values.get('PRODUCT_OPPORTUNITY')).get('CreatedDate');
 // System.debug('-->' + 'values[PRODUCT_OPPORTUNITY[CreatedDate]]' + '-->' + createdDate);
 
-String condition ='(values[PRODUCT_OPPORTUNITY[LATEST_QUALIFIED_DATE_TIME__c]] === null && values[PRODUCT_OPPORTUNITY[PRESALES_LEAD_JOURNEY__c]] === null)';
-Boolean eligible = CustomConditionEvaluator.evaluateCondition(values, condition);
-System.debug('-->' + 'condition' + '-->'+ eligible);/*  */
+// String condition ='(values[PRODUCT_OPPORTUNITY[LATEST_QUALIFIED_DATE_TIME__c]] === null && values[PRODUCT_OPPORTUNITY[PRESALES_LEAD_JOURNEY__c]] === null)';
+// Boolean eligible = CustomConditionEvaluator.evaluateCondition(values, condition);
+// System.debug('-->' + 'condition' + '-->'+ eligible);/*  */

@@ -393,7 +393,12 @@ public with sharing class CustomConditionEvaluator {
         
         if (firstBracket == -1) {
             // No brackets, just a single key
-            parts.add(expression.trim());
+            // But if there's a trailing ']', remove it (e.g., "CALL_STATUS__c]" -> "CALL_STATUS__c")
+            String key = expression.trim();
+            // if (key.endsWith(']') && !key.contains('[')) {
+            //     key = key.substring(0, key.length() - 1).trim();
+            // }
+            parts.add(key);
             return parts;
         }
         
