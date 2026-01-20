@@ -15,7 +15,7 @@ export default class DynamicFormRenderer extends LightningElement {
     }
 
     return this.visibleFields.map((field) => {
-      const fieldName = field.field;
+      const fieldName = field.field || field.field_id;
       const fieldValue = this.formValues && fieldName ? (this.formValues[fieldName] || '') : '';
       
       let fieldError = '';

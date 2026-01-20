@@ -2,7 +2,7 @@
     <template if:true={isText}>
         <template if:true={fieldConfig}>
             <c-base-form-input-text
-                field={fieldConfig.field}
+                field={fieldConfig.field_id}
                 label={fieldConfig.label}
                 placeholder={fieldConfig.placeHolder}
                 is-required={fieldConfig.isRequired}
@@ -16,7 +16,7 @@
     <template if:true={isPhone}>
         <template if:true={fieldConfig}>
             <c-base-form-input-phone
-                field={fieldConfig.field}
+                field={fieldConfig.field_id}
                 label={fieldConfig.label}
                 placeholder={fieldConfig.placeHolder}
                 is-required={fieldConfig.isRequired}
@@ -30,7 +30,7 @@
     <template if:true={isTextArea}>
         <template if:true={fieldConfig}>
             <c-base-form-input-text-area
-                field={fieldConfig.field}
+                field={fieldConfig.field_id}
                 label={fieldConfig.label}
                 placeholder={fieldConfig.placeHolder}
                 is-required={fieldConfig.isRequired}
@@ -44,7 +44,7 @@
     <template if:true={isSelect}>
         <template if:true={fieldConfig}>
             <c-base-form-input-select
-                field={fieldConfig.field}
+                field={fieldConfig.field_id}
                 label={fieldConfig.label}
                 placeholder={fieldConfig.placeHolder}
                 is-required={fieldConfig.isRequired}
@@ -58,7 +58,7 @@
     <template if:true={isMultiSelect}>
         <template if:true={fieldConfig}>
             <c-base-form-input-multi-select
-                field={fieldConfig.field}
+                field={fieldConfig.field_id}
                 label={fieldConfig.label}
                 placeholder={fieldConfig.placeHolder}
                 is-required={fieldConfig.isRequired}
@@ -74,7 +74,7 @@
     <template if:true={isRadio}>
         <template if:true={fieldConfig}>
             <c-base-form-input-radio
-                field={fieldConfig.field}
+                field={fieldConfig.field_id}
                 label={fieldConfig.label}
                 is-required={fieldConfig.isRequired}
                 value={fieldValue}
@@ -87,7 +87,7 @@
     <template if:true={isCheckbox}>
         <template if:true={fieldConfig}>
             <c-base-form-input-checkbox
-                field={fieldConfig.field}
+                field={fieldConfig.field_id}
                 label={fieldConfig.label}
                 is-required={fieldConfig.isRequired}
                 value={fieldValue}
@@ -101,7 +101,7 @@
     <template if:true={isDate}>
         <template if:true={fieldConfig}>
             <c-base-form-input-date
-                field={fieldConfig.field}
+                field={fieldConfig.field_id}
                 label={fieldConfig.label}
                 is-required={fieldConfig.isRequired}
                 type="date"
@@ -120,7 +120,7 @@
     <template if:true={isDateTime}>
         <template if:true={fieldConfig}>
             <c-base-form-input-date
-                field={fieldConfig.field}
+                field={fieldConfig.field_id}
                 label={fieldConfig.label}
                 is-required={fieldConfig.isRequired}
                 type="datetime"

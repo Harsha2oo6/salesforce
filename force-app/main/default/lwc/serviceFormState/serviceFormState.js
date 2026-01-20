@@ -18,13 +18,15 @@ export function resetDependentFields(values, changedFieldName, configFields) {
   // Find all fields that depend on the changed field
   configFields.forEach((field) => {
     if (
-      field.relevantFields &&
-      Array.isArray(field.relevantFields) &&
-      field.relevantFields.includes(changedFieldName)
+      field.relevant_fields &&
+      Array.isArray(field.relevant_fields) &&
+      field.relevant_fields.includes(changedFieldName)
     ) {
       // Reset this field to its default value
-      updatedValues[field.field] = field.defaultValue !== undefined 
-        ? (Array.isArray(field.defaultValue) ? [...field.defaultValue] : field.defaultValue)
+      const targetKey = field.field_id;
+
+      updatedValues[targetKey] = field.default_value !== undefined 
+        ? (Array.isArray(field.default_value) ? [...field.default_value] : field.default_value)
         : (field.type === 'multi_select' || field.type === 'checkbox' ? [] : '');
     }
   });
@@ -45,12 +47,12 @@ export function computeVisibleFields(configFields, values) {
 
   return configFields.filter((field) => {
     // If no condition specified, field is visible
-    if (!field.relevantCondition) {
+    if (!field.relevant_condition) {
       return true;
     }
 
     // Evaluate condition
-    return evaluateCondition(field.relevantCondition, values);
+    return evaluateCondition(field.relevant_condition, values);
   });
 }
 
@@ -67,17 +69,18 @@ export function initializeFormValues(configFields) {
   }
 
   configFields.forEach((field) => {
-    if (field.defaultValue !== undefined) {
+    if (field.default_value !== undefined) {
       // Deep copy arrays to avoid reference issues
-      values[field.field] = Array.isArray(field.defaultValue)
-        ? [...field.defaultValue]
-        : field.defaultValue;
+      const targetKey = field.field_id;
+      values[targetKey] = Array.isArray(field.default_value)
+        ? [...field.default_value]
+        : field.default_value;
     } else {
       // Set default based on field type
       if (field.type === 'multi_select' || field.type === 'checkbox') {
-        values[field.field] = [];
+        values[targetKey] = [];
       } else {
-        values[field.field] = '';
+        values[targetKey] = '';
       }
     }
   });

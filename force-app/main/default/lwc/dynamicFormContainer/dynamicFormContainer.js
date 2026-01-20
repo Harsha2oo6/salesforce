@@ -12,7 +12,7 @@ import { validateField } from 'c/utilityValidators';
 import { validateDateConstraints } from 'c/utilityDateUtils';
 
 export default class DynamicFormContainer extends LightningElement {
-  @api formName = 'default';
+  @api formName = 'SESSION_NOT_ATTENDED_CALL';
   @api formTitle = 'Dynamic Form';
   @api formActivityCode = null;
   @api config = null;
@@ -92,7 +92,9 @@ export default class DynamicFormContainer extends LightningElement {
   }
 
   validateSelectedValue(fieldName, value) {
-    const fieldConfig = this.config.fields.find((f) => f.field === fieldName);
+    const fieldConfig = this.config.fields.find(
+      (f) => f.field === fieldName || f.field_id === fieldName
+    );
     if (!fieldConfig) return;
 
     // For fields with options, check if selected value is still in filtered options
@@ -172,12 +174,14 @@ export default class DynamicFormContainer extends LightningElement {
   }
 
   validateFieldValue(fieldName, value) {
-    const fieldConfig = this.config.fields.find((f) => f.field === fieldName);
+    const fieldConfig = this.config.fields.find(
+      (f) => f.field_id === fieldName || f.field === fieldName
+    );
     if (!fieldConfig) return;
 
     const fieldErrors = validateField(
       value,
-      fieldConfig.isRequired,
+      fieldConfig.is_required,
       fieldConfig.validation_regexs || []
     );
 
@@ -219,9 +223,9 @@ export default class DynamicFormContainer extends LightningElement {
 
     this.visibleFields.forEach((field, index) => {
       try {
-        const fieldName = field.field;
+        const fieldName = field.field_id || field.field;
         const fieldValue = this.values[fieldName];
-        const isRequired = field.isRequired || false;
+        const isRequired = field.is_required || false;
         const validationRules = field.validation_regexs || [];
 
         let fieldErrors = validateField(

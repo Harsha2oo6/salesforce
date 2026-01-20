@@ -11,8 +11,11 @@
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__AppPage,lightning__RecordPage,lightning__HomePage">
-            <property name="formName" type="String" label="Form Name" description="Name/identifier of the form configuration" default="default"/>
-            <property name="formTitle" type="String" label="Form Title" description="Title displayed on the form card" default="Dynamic Form"/>
+            <property name="formName" type="String" label="Form Name"
+                description="Name/identifier of the form configuration"
+                default="SESSION_NOT_ATTENDED_CALL" />
+            <property name="formTitle" type="String" label="Form Title"
+                description="Title displayed on the form card" default="Dynamic Form" />
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>
