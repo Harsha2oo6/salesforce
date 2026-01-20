@@ -223,7 +223,7 @@ export default class DynamicFormContainer extends LightningElement {
 
     this.visibleFields.forEach((field, index) => {
       try {
-        const fieldName = field.field_id || field.field;
+        const fieldName = field.field_id;
         const fieldValue = this.values[fieldName];
         const isRequired = field.is_required || false;
         const validationRules = field.validation_regexs || [];
@@ -265,12 +265,42 @@ export default class DynamicFormContainer extends LightningElement {
     return result;
   }
 
+  getErrorSummaryMessage() {
+    // Default generic message
+    if (!this.errors || typeof this.errors !== 'object') {
+      return 'Please fix the errors before submitting.';
+    }
+
+    const lines = [];
+
+    Object.entries(this.errors).forEach(([fieldName, messages]) => {
+      if (!messages) {
+        return;
+      }
+
+      const msgArray = Array.isArray(messages) ? messages : [messages];
+      const uniqueMessages = [...new Set(msgArray.filter((m) => !!m))];
+
+      uniqueMessages.forEach((msg) => {
+        // Example: "mobileNumber: Invalid phone number"
+        lines.push(`${fieldName}: ${msg}`);
+      });
+    });
+
+    if (lines.length === 0) {
+      return 'Please fix the errors before submitting.';
+    }
+
+    return 'Please fix the following errors before submitting:\n' + lines.join('\n');
+  }
+
   async handleSubmit() {
     // Validate all fields
     const validationResult = this.validateAllFields();
 
     if (!validationResult) {
-      this.showToast('Error', 'Please fix the errors before submitting', 'error');
+      const errorMessage = this.getErrorSummaryMessage();
+      this.showToast('Error', errorMessage, 'error');
       return;
     }
 
@@ -297,7 +327,7 @@ export default class DynamicFormContainer extends LightningElement {
       //   values: this.values,
       //   timestamp: new Date().toISOString()
       // };
-      console.log('activityFormData', (JSON.stringify(activityFormData)));
+      // console.log('activityFormData', (JSON.stringify(activityFormData)));
       const result = await submitForm({ formValuesJson: JSON.stringify(activityFormData) });
 
       this.isSubmitting = false;

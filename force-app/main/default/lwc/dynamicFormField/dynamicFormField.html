@@ -135,5 +135,12 @@
             ></c-base-form-input-date>
         </template>
     </template>
+
+    <!-- Generic inline error message below the input -->
+    <template if:true={errorMessage}>
+        <div class="slds-form-element__help slds-text-color_error slds-m-top_x-small">
+            {errorMessage}
+        </div>
+    </template>
 </template>
 

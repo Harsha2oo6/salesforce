@@ -15,14 +15,14 @@ export default class DynamicFormRenderer extends LightningElement {
     }
 
     return this.visibleFields.map((field) => {
-      const fieldName = field.field || field.field_id;
+      const fieldName = field.field_id;
       const fieldValue = this.formValues && fieldName ? (this.formValues[fieldName] || '') : '';
       
       let fieldError = '';
       if (this.errors && this.errors[fieldName]) {
         const fieldErrors = this.errors[fieldName];
         if (Array.isArray(fieldErrors) && fieldErrors.length > 0) {
-          fieldError = fieldErrors[0];
+          fieldError = '*'+fieldErrors[0];
         }
       }
 

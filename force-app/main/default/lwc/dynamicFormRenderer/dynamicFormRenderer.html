@@ -1,9 +1,9 @@
 <template>
     <template if:true={hasFields}>
         <template for:each={fieldsWithData} for:item="field">
-            <div key={field.field} class="slds-form-element slds-m-bottom_medium">
+            <div key={field.field_id} class="slds-form-element slds-m-bottom_medium">
                 <c-dynamic-form-field
-                    key={field.field}
+                    key={field.field_id}
                     field-config={field}
                     field-value={field._fieldValue}
                     form-values={formValues}

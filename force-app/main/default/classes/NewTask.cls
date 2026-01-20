@@ -13,7 +13,7 @@ public with sharing class NewTask {
         Map<String, Object> mobileField = new Map<String, Object>();
         // Align keys with DynamicFormController.getSampleConfig
         mobileField.put('type', 'phone_number');
-        mobileField.put('field', 'mobile_number');
+        mobileField.put('field_id', 'mobile_number');
         mobileField.put('label', 'Mobile Number');
         mobileField.put('placeHolder', 'Enter mobile number');
         mobileField.put('helperText', 'Used for OTP verification');
@@ -34,7 +34,7 @@ public with sharing class NewTask {
 
         Map<String, Object> nameField = new Map<String, Object>();
         nameField.put('type', 'text');
-        nameField.put('field', 'name');
+        nameField.put('field_id', 'name');
         nameField.put('label', 'Name');
         nameField.put('placeHolder', 'Enter name');
         nameField.put('helperText', 'Enter name');
@@ -56,7 +56,7 @@ public with sharing class NewTask {
         List<Map<String, Object>> fields2 = new List<Map<String, Object>>();
         Map<String, Object> field2 = new Map<String, Object>();
         field2.put('type', 'text');
-        field2.put('field', 'task_2');
+        field2.put('field_id', 'task_2');
         field2.put('label', 'Task 2');
         field2.put('placeHolder', 'Enter task 2');
         field2.put('helperText', 'Enter task 2');
@@ -72,7 +72,7 @@ public with sharing class NewTask {
         List<Map<String, Object>> fields3 = new List<Map<String, Object>>();
         Map<String, Object> field3 = new Map<String, Object>();
         field3.put('type', 'text');
-        field3.put('field', 'task_3');
+        field3.put('field_id', 'task_3');
         field3.put('label', 'Task 3');
         field3.put('placeHolder', 'Enter task 3');
         field3.put('helperText', 'Enter task 3');
