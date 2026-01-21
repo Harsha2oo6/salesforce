@@ -102,7 +102,7 @@ export default class DynamicFormContainer extends LightningElement {
       fieldConfig.options &&
       Array.isArray(fieldConfig.options) &&
       (fieldConfig.type === 'select' ||
-        fieldConfig.type === 'multi_select' ||
+        fieldConfig.type === 'Multi_select' ||
         fieldConfig.type === 'radio_group' ||
         fieldConfig.type === 'checkbox')
     ) {

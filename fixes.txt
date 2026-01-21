@@ -14,7 +14,6 @@ Keep the API and events:
 @api field, @api label, @api placeholder, @api isRequired, @api value (array), @api options, @api errorMessage.
 Emit valuechange with { field, value: string[] } when selection changes.
 1.3 Integrate with dynamic form system
-Ensure dynamicFormField continues to treat type === 'multi_select' as an array field.
 Confirm serviceFormState.getFilteredOptions works unchanged (same options in, filtered options out).
 Make sure utilityValidators.validateField and validateRequired correctly handle arrays (they already do, but we verify behavior with the new UI).
 1.4 Accessibility & UX polish
@@ -42,7 +41,8 @@ Emits fieldblur with { field, value }.
 dynamicFormContainer.validateFieldValue / validateAllFields:
 For date fields, call validateDateConstraints and merge any error message into errors[fieldName].
 3.3 Multi‑select validation
-Ensure required + regex validations treat multi_select correctly as arrays (already supported by validateRequired and runValidations, but we confirm with the new dropdown UX).
+Ensure dynamicFormField continues to treat type === 'Multi_select' as an array field.
+Ensure required + regex validations treat Multi_select correctly as arrays (already supported by validateRequired and runValidations, but we confirm with the new dropdown UX).
 Surface any invalid state via errors[field] so the multi-select combobox shows a consistent error message.
 4. Service/UI Separation for Form Config
 4.1 Make fetchFormConfig pure

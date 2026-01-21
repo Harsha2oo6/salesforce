@@ -181,7 +181,7 @@ public with sharing class DynamicFormController {
 
     // Field 4: Multi-Select (conditional - appears when user_type is 'admin')
     Map<String, Object> multiSelectField = new Map<String, Object>();
-    multiSelectField.put('type', 'multi_select');
+        multiSelectField.put('type', 'Multi_select');
     multiSelectField.put('field', 'allowed_modules');
     multiSelectField.put('label', 'Allowed Modules');
     multiSelectField.put('placeHolder', 'Select modules');
@@ -565,11 +565,11 @@ public with sharing class DynamicFormController {
     Map<String, Object> whoVisitCampus = new Map<String, Object>();
     whoVisitCampus.put('label', 'Who all will visit the campus?');
     whoVisitCampus.put('field_id', 'WHO_ALL_WILL_VISIT_THE_CAMPUS__c');
-    whoVisitCampus.put('type', 'select');
+        whoVisitCampus.put('type', 'Multi_select');
     whoVisitCampus.put('place_holder', '');
     whoVisitCampus.put('helper_text', '');
     whoVisitCampus.put('is_required', true);
-    whoVisitCampus.put('default_value', '');
+    whoVisitCampus.put('default_value', new List<String>());
     whoVisitCampus.put(
       'relevant_condition',
       '(values[HOW_DID_THE_CALL_GO__c] === interested_in_campus_visit)'

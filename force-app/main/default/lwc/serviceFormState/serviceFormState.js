@@ -70,9 +70,9 @@ export function resetDependentFields(values, changedFieldName, configFields) {
           ? Array.isArray(field.default_value)
             ? [...field.default_value]
             : field.default_value
-          : field.type === 'multi_select' || field.type === 'checkbox'
-          ? []
-          : '';
+          : field.type === 'Multi_select' || field.type === 'checkbox'
+            ? []
+            : '';
     }
   });
 
@@ -122,7 +122,7 @@ export function initializeFormValues(configFields) {
         : field.default_value;
     } else {
       // Set default based on field type
-      if (field.type === 'multi_select' || field.type === 'checkbox') {
+      if (field.type === 'Multi_select' || field.type === 'checkbox') {
         values[targetKey] = [];
       } else {
         values[targetKey] = '';

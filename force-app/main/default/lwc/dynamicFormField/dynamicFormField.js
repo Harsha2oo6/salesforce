@@ -24,7 +24,7 @@ export default class DynamicFormField extends LightningElement {
   }
 
   get isMultiSelect() {
-    return this.fieldConfig?.type === 'multi_select';
+    return this.fieldConfig?.type === 'Multi_select';
   }
 
   get isRadio() {
