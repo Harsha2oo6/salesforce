@@ -6,6 +6,31 @@
 import { evaluateCondition } from 'c/utilityConditionEvaluator';
 
 /**
+ * Extracts field ids referenced as values[FIELD_ID] in a condition string
+ * Supports: values[CALL_STATUS__c], values['CALL_STATUS__c'], values["CALL_STATUS__c"]
+ * @param {string} condition
+ * @returns {Array<string>}
+ */
+function extractRelevantIdsFromCondition(condition) {
+  if (typeof condition !== 'string') {
+    return [];
+  }
+
+  const ids = new Set();
+  // Matches: values[CALL_STATUS__c], values['CALL_STATUS__c'], values["CALL_STATUS__c"]
+  const regex = /values\[\s*(?:'([^']+)'|"([^"]+)"|([A-Za-z0-9_]+))\s*\]/g;
+  let match;
+
+  while ((match = regex.exec(condition)) !== null) {
+    const id = match[1] || match[2] || match[3];
+    if (id) {
+      ids.add(id);
+    }
+  }
+
+  return Array.from(ids);
+}
+/**
  * Resets dependent fields when a field value changes
  * @param {Object} values - Current form values object
  * @param {string} changedFieldName - Name of the field that changed
@@ -17,17 +42,37 @@ export function resetDependentFields(values, changedFieldName, configFields) {
 
   // Find all fields that depend on the changed field
   configFields.forEach((field) => {
+    // 1. Explicit relevant_fields from config
+    const explicitRelevantIds = Array.isArray(field.relevant_fields)
+      ? field.relevant_fields
+      : [];
+
+    // 2. Relevant ids inferred from relevant_condition
+    const conditionRelevantIds = extractRelevantIdsFromCondition(
+      field.relevant_condition
+    );
+
+    // 3. Unique union of both sets
+    const allRelevantIds = Array.from(
+      new Set([...explicitRelevantIds, ...conditionRelevantIds])
+    );
+
     if (
-      field.relevant_fields &&
-      Array.isArray(field.relevant_fields) &&
-      field.relevant_fields.includes(changedFieldName)
+      Array.isArray(allRelevantIds) &&
+      allRelevantIds.length > 0 &&
+      allRelevantIds.includes(changedFieldName)
     ) {
       // Reset this field to its default value
       const targetKey = field.field_id;
 
-      updatedValues[targetKey] = field.default_value !== undefined 
-        ? (Array.isArray(field.default_value) ? [...field.default_value] : field.default_value)
-        : (field.type === 'multi_select' || field.type === 'checkbox' ? [] : '');
+      updatedValues[targetKey] =
+        field.default_value !== undefined
+          ? Array.isArray(field.default_value)
+            ? [...field.default_value]
+            : field.default_value
+          : field.type === 'multi_select' || field.type === 'checkbox'
+          ? []
+          : '';
     }
   });
 
