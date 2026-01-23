@@ -1,0 +1,57 @@
+<template>
+    <lightning-card title="Student Search" icon-name="standard:search">
+        <div class="slds-p-around_medium">
+            <!-- Search Interface -->
+            <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_medium">
+                <div class="slds-col slds-size_2-of-3">
+                    <lightning-input
+                        type="search"
+                        label="Search by College Name"
+                        placeholder="Enter college name..."
+                        value={searchTerm}
+                        onchange={handleSearchChange}
+                        oncommit={handleSearch}
+                    ></lightning-input>
+                </div>
+                <div class="slds-col slds-align-bottom">
+                    <lightning-button
+                        label="Search"
+                        variant="brand"
+                        onclick={handleSearch}
+                    ></lightning-button>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </template>
+
+            <!-- Error Message -->
+            <template if:true={error}>
+                <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
+                    <span class="slds-assistive-text">error</span>
+                    <h2>{error}</h2>
+                </div>
+            </template>
+
+            <!-- Results Table -->
+            <div class="table-container">
+                <lightning-datatable
+                    key-field="id"
+                    data={records}
+                    columns={columns}
+                    hide-checkbox-column
+                    show-row-number-column
+                ></lightning-datatable>
+            </div>
+            
+            <!-- No Results Message (Optional) -->
+            <template if:false={records.length}>
+                <div class="slds-text-align_center slds-text-color_weak slds-p-top_medium">
+                    No records to display.
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>
