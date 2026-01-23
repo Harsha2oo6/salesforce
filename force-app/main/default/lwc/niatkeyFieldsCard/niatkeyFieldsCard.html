@@ -19,12 +19,20 @@
             <template if:false={isLoading}>
                 <template if:false={error}>
                     <template if:true={hasKeyFields}>
-                        <template for:each={sortedKeyFields} for:item="field">
-                            <div key={field.order}
-                                class="slds-box slds-box_x-small slds-m-bottom_x-small key-field-row">
-                                <c-common-field-container item={field}></c-common-field-container>
-                            </div>
-                        </template>
+                        
+                        <div class="fields-container">
+                            
+                            <template for:each={sortedKeyFields} for:item="field">
+                                <div key={field.order} class="field-item">
+                                    
+                                    <div class="slds-box slds-box_x-small key-field-row">
+                                        <c-common-field-container item={field} align="column"></c-common-field-container>
+                                    </div>
+                                </div>
+                            </template>
+
+                        </div>
+
                     </template>
                     <template if:false={hasKeyFields}>
                         <div class="slds-text-align_center slds-p-around_medium">

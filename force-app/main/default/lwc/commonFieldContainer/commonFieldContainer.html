@@ -1,6 +1,6 @@
 <template>
-    <div class="slds-grid slds-grid_vertical-align-center responsive-field">
-        <strong class="slds-m-right_small label">{formattedLabel}</strong>
+    <div class={containerClass}>
+        <strong class={labelClass}>{formattedLabel}</strong>
 
         <div class="slds-text-body_small value">
             <template if:true={isBoolean}>

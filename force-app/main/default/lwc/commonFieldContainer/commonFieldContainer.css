@@ -1,13 +1,50 @@
 /* Field Container Component Styles */
-/* Mobile-first override */
+
+/* Base container */
+.responsive-field {
+    width: 100%;
+}
+
+/* Row layout - uses slds-grid from containerClass */
+.field-row {
+    align-items: flex-start;
+}
+
+/* Label in row layout - slds-m-right_small already provides margin-right */
+.field-row .label {
+    overflow-wrap: break-word;
+}
+
+/* Column layout */
+.field-column {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.field-column .label-column {
+    margin-bottom: var(--lwc-spacingXxxSmall, 0.25rem);
+    overflow-wrap: break-word;
+    width: 100%;
+}
+
+/* Value wrapping */
+.value {
+    overflow-wrap: break-word;
+    flex: 1;
+}
+
+/* Mobile: force column layout for row fields */
 @media (max-width: 768px) {
-    .responsive-field {
+    .field-row {
         flex-direction: column;
-        align-items: flex-start;
     }
 
-    .label {
+    .field-row .label {
         margin-right: 0;
-        margin-bottom: 0.25rem;
+        margin-bottom: var(--lwc-spacingXxxSmall, 0.25rem);
+        width: 100%;
+        display: block;
     }
 }

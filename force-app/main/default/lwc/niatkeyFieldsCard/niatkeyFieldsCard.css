@@ -1,6 +1,25 @@
+.fields-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--lwc-spacingXSmall, 0.5rem);
+}
+
+.field-item {
+    width: 100%;
+    min-width: 0;
+    overflow: visible;
+    display: flex;
+}
+
 .key-field-row {
     border-left: 3px solid var(--lwc-colorBrand, #0176d3);
     background-color: var(--lwc-colorBackgroundAlt, #ffffff);
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .key-field-row:hover {
@@ -14,9 +33,16 @@
     gap: var(--lwc-spacingSmall, 0.75rem);
 }
 
-.spinnerHolder{
+.spinnerHolder {
     position: relative;
     display: inline-block;
     width: 80px;
     height: 80px;
+}
+
+/* Mobile: fields take 100% width */
+@media (max-width: 768px) {
+    .fields-container {
+        grid-template-columns: 1fr;
+    }
 }
