@@ -44,9 +44,9 @@ public with sharing class ProductDetailsController {
         // Key Fields
         List<Map<String, Object>> keyFields = new List<Map<String, Object>>();
         keyFields.add(createKeyField('id', '12345', 1, 'string'));
-        keyFields.add(createKeyField('dm_phone_numberRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR', '+91-9876543210', 2, 'phone'));
+        keyFields.add(createKeyField('dm_phone_numbergggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggguuuuuuuuuuuuuuuuuuuuuuuuuuuugggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg', '+91-9876543210', 2, 'phone'));
         keyFields.add(createKeyField('influencer_number', 'INF-20489', 3, 'string'));
-        keyFields.add(createKeyField('program', 'Full Stack Web DevelopmentTRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR', 4, 'string'));
+        keyFields.add(createKeyField('program', 'Full Stack Web Developmentggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg', 4, 'string'));
         keyFields.add(createKeyField('payment_plan', '6 Months EMI', 5, 'string'));
         keyFields.add(createKeyField('payment_plan', '6 Months EMI', 5, 'string'));
         keyFields.add(createKeyField('payment_plan', '6 Months EMI', 5, 'string'));
